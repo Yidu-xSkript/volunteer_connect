@@ -2,14 +2,26 @@
 
 **Libraries** In Use:
 
-> ReactJS
-> TailWind css
-> Axios
+- ReactJS
+- TailWind css
+- Axios
 
 Install [NodeJs](https://nodejs.org/en/download/) to use the node package manager (npm).
 
-run "**npm Install**" to download all the necessary packages.
+Download all the necessary packages.
 
-run "**npm start**" to start the react app.
+```js
+npm Install
+```
 
-run "**npm start-backend**" to start flask app from the frontend
+To start the react app.
+
+```js
+npm start
+```
+
+To start flask app (backend) from the frontend (inside the current dir)
+
+```js
+npm start-backend
+```

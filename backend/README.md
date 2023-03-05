@@ -2,8 +2,8 @@
 
 **Technologies** Used:
 
-> Flask
-> Flask-SQLAlchemy
+- Flask
+- Flask-SQLAlchemy
 
 ## Steps to start flask app
 
@@ -30,6 +30,12 @@ pip install flask
 pip install python-dotenv
 pip install flask-sqlalchemy
 pip install flask-migrate
+```
+
+run Flask using cmd:
+
+```python
+flask run
 ```
 
 To leave the env type ```deactivate```
