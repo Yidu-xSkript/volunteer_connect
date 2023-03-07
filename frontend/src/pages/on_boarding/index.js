@@ -1,5 +1,5 @@
 
-const signup = () => (
+const onBoarding = () => (
     <div className="App">
       <header className="App-header">
         <p>
@@ -17,4 +17,4 @@ const signup = () => (
     </div>
 );
 
-export default signup;
+export default onBoarding;
