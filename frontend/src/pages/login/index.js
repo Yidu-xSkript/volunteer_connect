@@ -1,5 +1,5 @@
 
-const signin = () => (
+const login = () => (
     <div className="App">
       <header className="App-header">
         <p>
@@ -17,4 +17,4 @@ const signin = () => (
     </div>
 );
 
-export default signin;
+export default login;
