@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import Signup from './pages/signup';
 import Login from './pages/login';
+import OnBoarding from './pages/on_boarding';
 import reportWebVitals from './reportWebVitals';
 import ErrorPage from "./error-page";
 
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/on-boarding",
+    element: <OnBoarding />,
   }
 ]);
 
