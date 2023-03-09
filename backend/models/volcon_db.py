@@ -8,6 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+
 class User(db.Model):
     """Defines the User Table on the Database"""
 
@@ -25,6 +26,22 @@ class User(db.Model):
     __mapper_args__ = {
         'polymorphic_identity': 'user',
         'polymorphic_on': role
+    }
+
+class Volunteer(User):
+    """Defines the Volunteers table; which is a Child Table of the User Table"""
+
+    __tablename__ = 'volunteers'
+
+    volunteer_id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(50), nullable=False)
+    middle_name = db.Column(db.String(50), nullable=True)
+    last_name = db.Column(db.String(50), nullable=False)
+    age = db.Column(db.Integer, nullable=False)
+    profile_pic = db.Column(db.String(255), nullable=True)
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'volunteer'
     }
 
 class Organization(User):
