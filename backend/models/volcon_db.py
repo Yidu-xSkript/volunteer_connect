@@ -36,7 +36,7 @@ class Volunteer(User):
     volunteer_id = db.Column(db.Integer, primary_key=True)
     full_name = db.Column(db.String(255), nullable=False)
     age = db.Column(db.Integer, nullable=False)
-    profile_pic = db.Column(db.String(255), nullable=True)
+    profile_pic = db.Column(db.LargeBinary(), nullable=True)
 
     __mapper_args__ = {
         'polymorphic_identity': 'volunteer'
@@ -51,6 +51,7 @@ class Organization(User):
     org_name = db.Column(db.String(255), nullable=False)
     location = db.Column(db.String(255), nullable=False)
     biography = db.Column(db.Text, nullable=True)
+    profile_logo = db.Column(db.LargeBinary(), nullable=True)
 
     __mapper_args__ = {
         'polymorphic_identity': 'organization'
