@@ -4,7 +4,7 @@ import Dropdown from '../../components/form/dropdown';
 import Button from '../../components/form/button';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
-import AuthLayout from '../../Layout/Auth';
+import GuestLayout from '../../Layout/Guest';
 
 function Signup() {
   const [passwordVisibility, setPasswordVisibility] = useState("password")
@@ -13,7 +13,7 @@ function Signup() {
   }
   const roleOptions = [{ id: 1, name: 'Volunteer' }, { id: 2, name: 'Organization' }]
   return (
-    <AuthLayout>
+    <GuestLayout>
       <Input type={"text"} placeholder={"Name"} required={true} />
       <Input type={"email"} placeholder={"Email"} required={true} />
       <Input type={passwordVisibility} placeholder={"Password"} icon={
@@ -23,7 +23,7 @@ function Signup() {
       } required={true} />
       <Dropdown options={roleOptions} />
       <Button className={'rounded-full mt-20 w-2/3'} text={'Get Started'} />
-    </AuthLayout>
+    </GuestLayout>
   );
 };
 
