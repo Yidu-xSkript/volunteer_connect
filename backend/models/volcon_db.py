@@ -34,9 +34,7 @@ class Volunteer(User):
     __tablename__ = 'volunteers'
 
     volunteer_id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(50), nullable=False)
-    middle_name = db.Column(db.String(50), nullable=True)
-    last_name = db.Column(db.String(50), nullable=False)
+    full_name = db.Column(db.String(255), nullable=False)
     age = db.Column(db.Integer, nullable=False)
     profile_pic = db.Column(db.String(255), nullable=True)
 
@@ -50,7 +48,7 @@ class Organization(User):
     __tablename__ = 'organizations'
 
     org_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), nullable=False)
+    org_name = db.Column(db.String(255), nullable=False)
     location = db.Column(db.String(255), nullable=False)
     biography = db.Column(db.Text, nullable=True)
 
