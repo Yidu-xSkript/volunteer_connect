@@ -3,6 +3,9 @@ import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 import welcome from '../../assets/on-boarding-welcome.svg';
 import FormButton from "../../components/form/button";
 import authCircle from '../../assets/vc-auth-circle-1.svg'
+import UploadWidget from "../../components/form/file_upload";
+import Input from "../../components/form/input";
+import TextArea from "../../components/form/textarea";
 
 function OnBoarding() {
   const wizards = [
@@ -61,14 +64,25 @@ function OnBoarding() {
           }
           {selectedPill === 1 &&
             <>
-              <h1 className="font-heading text-black text-5xl mt-5">Tell us about <span className="text-primary">yourself</span></h1>
-
+              <h1 className="font-heading text-black text-5xl mt-5 mb-20">Tell us about <span className="text-primary">yourself</span></h1>
+              <div className="inline-flex w-full justify-center space-x-10 px-20">
+                <UploadWidget className={'h-auto w-1/3'} text="Upload Logo" />
+                <div className="w-2/3">
+                  <Input placeholder={'Organization name'} required={true} type={'text'} className={'border border-gray-100 shadow'} />
+                  <Input placeholder={'Phone Number'} required={true} type={'number'} className={'border border-gray-100 shadow'} />
+                </div>
+              </div>
+              <div className="w-full px-20 my-10">
+                <TextArea placeholder={'A little about yourself'} rows={5} className={'w-full p-5 shadow resize-none'} />
+              </div>
             </>
           }
           {selectedPill === 2 &&
             <>
               <h1 className="font-heading text-black text-5xl mt-5 text-center">Upload Your <br className="mb-5"/><span className="text-primary">Resume</span></h1>
-
+              <div className="w-full px-20 py-10">
+                <UploadWidget className={'h-64'} text="Choose your resume to upload" text2="PDF, JPEG, or PNG" />
+              </div>
             </>
           }
           <FormButton text={selectedPill === wizards.length - 1 ? "Submit" : selectedPill === 0 ? "Get Started" : "Next"} className={"rounded-full mt-10 w-1/2"} action={incrementPill} />
