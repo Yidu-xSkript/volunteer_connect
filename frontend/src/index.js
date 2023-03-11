@@ -11,6 +11,7 @@ import Login from './pages/login';
 import OnBoarding from './pages/on_boarding';
 import reportWebVitals from './reportWebVitals';
 import ErrorPage from "./error-page";
+import NotFound from './pages/404';
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
   {
     path: "/on-boarding",
     element: <OnBoarding />,
+  },
+  {
+    path: "*",
+    element: <NotFound/>
   }
 ]);
 
