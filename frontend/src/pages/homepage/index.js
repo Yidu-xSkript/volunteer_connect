@@ -1,5 +1,7 @@
 import AuthLayout from "../../Layout/Auth";
 import MissionHomeCard from "../../components/cards/mission_home";
+import Search from "../../components/form/search";
+import Filter from "../../components/form/filter";
 
 function Home() {
     // missions static
@@ -76,12 +78,14 @@ function Home() {
     }
     return (
         <AuthLayout>
-            <main className="container mx-auto flex py-20 space-x-10">
+            <main className="container mx-auto flex py-14 space-x-10">
                 {/* Filter Component */}
-                <div className="w-1/3"></div>
-                <div className="w-2/3">
+                <div className="w-1/3">
+                    <Filter />
+                </div>
+                <div className="w-2/3 space-y-7">
                     {/* Search Component */}
-                    
+                    <Search />
                     {/* Missions */}
                     <div className="shadow shadow-slate-50 p-5 border border-gray-200 space-y-5 bg-white rounded-2xl">
                         {missions.map((mission) => (
