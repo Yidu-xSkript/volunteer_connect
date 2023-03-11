@@ -3,7 +3,7 @@ import authCircle from '../../assets/vc-auth-circle-1.svg'
 import authCircleWhite from '../../assets/auth-circle-white.svg'
 import { Link, useLocation } from "react-router-dom";
 
-function AuthLayout({ children }) {
+function GuestLayout({ children }) {
     const location = useLocation().pathname;
     return (
         <div className='flex z-0'>
@@ -33,4 +33,4 @@ function AuthLayout({ children }) {
     );
 };
 
-export default AuthLayout;
+export default GuestLayout;
