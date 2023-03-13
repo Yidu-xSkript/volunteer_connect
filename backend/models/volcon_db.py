@@ -57,6 +57,18 @@ class Organization(User):
         'polymorphic_identity': 'organization'
     }
 
+    def to_dict(self):
+        """Function to Convert entry data to a python dict"""
+        return {
+            'org_id': self.org_id,
+            'org_name': self.org_name,
+            'location': self.location,
+            'biography': self.biography,
+            'profile_logo': self.profile_logo,
+            'email': self.email,
+            'phone_no': self.phone_no
+        }
+
 class Mission(db.Model):
     """Defines the Mission Table; Which is a Child Table for the User Table
     `Missions` table has a 1:Many Relationship with the Application table"""
