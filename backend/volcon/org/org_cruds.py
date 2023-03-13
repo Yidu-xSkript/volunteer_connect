@@ -3,7 +3,7 @@
 
 from flask import Blueprint, jsonify, request
 from sqlalchemy.exc import SQLAlchemyError
-from volcon_db import db, Organization
+from backend.models.volcon_db import db, Organization
 
 
 #Blueprint defination
