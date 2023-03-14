@@ -136,7 +136,7 @@ function Mission() {
                             <div className="rounded-3xl border border-gray-300 shadow p-10 grid grid-cols-4">
                                 <img src={empty} alt="No Content Found." className="col-span-1" />
                                 <div className="flex flex-col items-center justify-center col-span-3 space-y-6">
-                                    <h3 className="uppercase tracking-[0.6rem] font-light text-4xl">Empty!</h3>
+                                    <h3 className="uppercase tracking-[0.6rem] font-bold text-4xl">Empty!</h3>
                                     <p className="text-2xl font-light text-gray-500 capitalize">You have not created any missions yet!</p>
                                     <Button text={"Create Mission"} className="text-xl px-8 rounded-full" action={openAddModal} />
                                 </div>
