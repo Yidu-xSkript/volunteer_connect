@@ -16,7 +16,7 @@ function Header() {
             <div className="space-x-5">
                 <NavLink className={({ isActive }) => isActive ? "text-black" : "text-gray-400 hover:text-black"} to="/">Find Missions</NavLink>
                 <NavLink className={({ isActive }) => isActive ? "text-black" : "text-gray-400 hover:text-black"} to="/missions">Missions</NavLink>
-                <NavLink className={({ isActive }) => isActive ? "text-black" : "text-gray-400 hover:text-black"} to="/applied">Missions Applied</NavLink>
+                <NavLink className={({ isActive }) => isActive ? "text-black" : "text-gray-400 hover:text-black"} to="/applications">Applications</NavLink>
                 <NavLink className={({ isActive }) => isActive ? "text-black" : "text-gray-400 hover:text-black"} to="/applicants">Applicants</NavLink>
             </div>
 
