@@ -12,6 +12,7 @@ import reportWebVitals from './reportWebVitals';
 import ErrorPage from "./error-page";
 import Home from './pages/homepage';
 import NotFound from './pages/404';
+import Mission from './pages/missions';
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
   {
     path: "/on-boarding",
     element: <OnBoarding />,
+  },
+  {
+    path: "/missions",
+    element: <Mission />,
   },
   {
     path: "*",
