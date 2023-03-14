@@ -95,7 +95,7 @@ function Mission() {
     const closeModal = () => {
         if (showModal) setShowModal(false)
         if (showDelModal) setShowDelModal(false)
-        setType("")
+        // setType("")
         bodyScrollStatus(false)
     }
     const OpenDeleteModal = () => {
