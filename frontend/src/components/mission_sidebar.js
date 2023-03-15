@@ -1,10 +1,20 @@
 import { XMarkIcon, MapPinIcon, CheckIcon } from "@heroicons/react/24/outline";
+import { useState } from "react";
 import MissionDetailSmall from "./cards/mission_detail_tiny";
 import Button from "./form/button";
+import Apply from "./modal/Apply";
 
 function MissionSideBar({ showSidebar, onClick, mission }) {
+
+    const [showApply, setShowApply] = useState(false)
+
+    const setShowApplyModal = () => {
+        setShowApply(true)
+    }
+
     return (
         <div>
+            <Apply showModal={showApply} close={() => setShowApply(false)} />
             {showSidebar && <div className="fixed top-0 right-0 w-screen h-screen bg-primary opacity-10 z-10" />}
             <div id="m_sidebar" className={`fixed overflow-y-scroll top-0 right-0 h-screen w-2/5 bg-white shadow-2xl space-y-7 shadow-slate-50 border ease-in-out duration-1000 border-gray-200 px-10 pt-10 z-20 ${showSidebar ? "translate-x-0 block" : "translate-x-full"}`}>
                 <div className="flex flex-col items-end">
@@ -30,13 +40,13 @@ function MissionSideBar({ showSidebar, onClick, mission }) {
                     </div>
                 </div>
                 <div className="grid grid-cols-3 gap-5">
-                    <MissionDetailSmall text={mission.volunteering_hours} title="Volunteering Hours" />
-                    <MissionDetailSmall text={mission.deadline} title="Application Deadline" />
-                    <MissionDetailSmall text={mission.job_location} title="Location" />
+                    <MissionDetailSmall key={1} text={mission.volunteering_hours} title="Volunteering Hours" />
+                    <MissionDetailSmall key={2} text={mission.deadline} title="Application Deadline" />
+                    <MissionDetailSmall key={3} text={mission.job_location} title="Location" />
                 </div>
                 <div className="grid grid-cols-2 gap-5">
-                    <MissionDetailSmall text={mission.est_time} title="Estimated Time" />
-                    <MissionDetailSmall text={mission.volunteer_amount} title="Amount of Applicants" />
+                    <MissionDetailSmall key={4} text={mission.est_time} title="Estimated Time" />
+                    <MissionDetailSmall key={5} text={mission.volunteer_amount} title="Amount of Applicants" />
                 </div>
                 <div className="space-y-3">
                     <h2 className="font-heading text-2xl">About your role here</h2>
@@ -46,7 +56,7 @@ function MissionSideBar({ showSidebar, onClick, mission }) {
                     <h2 className="font-heading text-2xl">Requirements</h2>
                     <div className="space-y-1">
                         {mission.requirements?.map((req) => (
-                            <div className="flex items-center space-x-1">
+                            <div key={req.id} className="flex items-center space-x-1">
                                 <CheckIcon className="w-5 p-1 bg-primary text-white rounded-full" />
                                 <p className="text-gray-600 text-sm">{req.name}</p>
                             </div>
@@ -58,7 +68,7 @@ function MissionSideBar({ showSidebar, onClick, mission }) {
                     <p className="text-sm text-gray-600">{mission.description}</p>
                 </div>
                 <div className="sticky bottom-0 right-0 bg-white w-full p-10">
-                    <Button text={"Apply to Volunteer"} className="w-full rounded-2xl" />
+                    <Button text={"Apply to Volunteer"} className="w-full rounded-2xl" action={setShowApplyModal} />
                 </div>
             </div>
         </div>
