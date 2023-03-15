@@ -42,6 +42,19 @@ class Volunteer(User):
         'polymorphic_identity': 'volunteer'
     }
 
+    def to_dict(self):
+        """A Function to Convert Volunteer Object to Python Dict"""
+        return {
+            'volunteer_id':self.volunteer_id,
+            'name': self.full_name,
+            'profile_pic': self.profile_pic,
+            'email': self.email,
+            'phone_no': self.phone_no,
+            'role': self.role,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at
+        }
+
 class Organization(User):
     """Defines the Organization Table; which is a Child Table of the User Table"""
 
@@ -66,7 +79,9 @@ class Organization(User):
             'biography': self.biography,
             'profile_logo': self.profile_logo,
             'email': self.email,
-            'phone_no': self.phone_no
+            'phone_no': self.phone_no,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at
         }
 
 class Mission(db.Model):
