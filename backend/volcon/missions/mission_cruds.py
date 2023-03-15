@@ -79,7 +79,7 @@ class mission_cruds:
         @staticmethod
         def serialize(self):
             return {
-                'id': self.id,
+                'mission_id': self.mission_id,
                 'org_id': self.org_id,
                 'name': self.name,
                 'description': self.description,
