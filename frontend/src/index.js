@@ -13,6 +13,7 @@ import ErrorPage from "./error-page";
 import Home from './pages/homepage';
 import NotFound from './pages/404';
 import Mission from './pages/missions';
+import Applications from './pages/applications';
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
   {
     path: "/missions",
     element: <Mission />,
+  },
+  {
+    path: "/applications",
+    element: <Applications />,
   },
   {
     path: "*",

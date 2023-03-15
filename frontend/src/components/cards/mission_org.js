@@ -1,9 +1,9 @@
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
-function OrgMissionCard({id, title, post_human_date, description, deadline, volunteering_hours, est_time, applicants}) {
-    // Use ID for edit & delete modal.
+// import { useState } from "react";
+// import MissionModal from "../modal/mission";
 
-    const openEditModal = () => {}
-    const openDeleteModal = () => {}
+function OrgMissionCard({id, title, post_human_date, description, deadline, volunteering_hours, est_time, applicants, openEditModal, openDeleteModal}) {
+    // Use ID for edit & delete modal.
 
     return (
         <div className="rounded-3xl border border-gray-300 shadow-lg shadow-slate-100 p-10 bg-white space-y-5">
