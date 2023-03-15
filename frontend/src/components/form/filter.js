@@ -29,7 +29,7 @@ function Filter() {
                 <h3 className="text-xl font-semibold tracking-wide">Filter</h3>
                 <div className="text-base text-gray-400 flex items-end space-x-1 cursor-pointer"><span>Clear all</span> <XCircleIcon className="w-6" /> </div>
             </div>
-            <hr class="h-px bg-gray-100 border-0 w-full"/>
+            <hr className="h-px bg-gray-100 border-0 w-full"/>
             {/* Location Filter -- populate data from an API */}
             <div className="">
                 <label className="font-semibold">Location</label>
@@ -39,7 +39,7 @@ function Filter() {
                     </div>
                 } />
             </div>
-            <hr class="h-px bg-gray-100 border-0 w-full"/>
+            <hr className="h-px bg-gray-100 border-0 w-full"/>
             {/* Category Filter */}
             <div className="space-y-2">
                 <label className="font-semibold">Category</label>
@@ -52,7 +52,7 @@ function Filter() {
                 </div>
                 <ChevronDownIcon className='w-6 cursor-pointer' title="Show More Categories" />
             </div>
-            <hr class="h-px bg-gray-100 border-0 w-full"/>
+            <hr className="h-px bg-gray-100 border-0 w-full"/>
             {/* Organization Filter */}
             <div className="space-y-2">
                 <label className="font-semibold">Organizations</label>
@@ -65,13 +65,13 @@ function Filter() {
                 </div>
                 <ChevronDownIcon className='w-6 cursor-pointer' title="Show More Organizations" />
             </div>
-            <hr class="h-px bg-gray-100 border-0 w-full"/>
+            <hr className="h-px bg-gray-100 border-0 w-full"/>
             {/* Applicants Filter */}
             <div className="">
                 <label className="font-semibold">Applicants</label>
                 <Dropdown options={applicants} selectClass={'text-gray-400'} className={'w-full shadow shadow-slate-200 border border-gray-100 rounded-xl'} />
             </div>
-            <hr class="h-px bg-gray-100 border-0 w-full"/>
+            <hr className="h-px bg-gray-100 border-0 w-full"/>
             {/* Work Experience Filter */}
             <div className="space-y-2">
                 <label className="font-semibold">Experience</label>
