@@ -15,6 +15,7 @@ import NotFound from './pages/404';
 import Mission from './pages/missions';
 import Applications from './pages/applications';
 import Applicants from './pages/applicants';
+import Profile from './pages/profile';
 
 const router = createBrowserRouter([
   {
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
   {
     path: "/applicants",
     element: <Applicants />,
+  },
+  {
+    path: "/profile",
+    element: <Profile />,
   },
   {
     path: "*",

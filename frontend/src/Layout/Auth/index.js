@@ -1,11 +1,11 @@
 import Footer from "../../components/layout/footer";
 import Header from "../../components/layout/header";
 
-const AuthLayout = ({children}) => (
+const AuthLayout = ({children, removeFooter = false}) => (
     <>
         <Header/>
         {children}
-        <Footer/>
+        {!removeFooter && <Footer/>}
     </>
 );
 export default AuthLayout;
