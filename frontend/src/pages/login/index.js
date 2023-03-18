@@ -12,13 +12,13 @@ function Login() {
   }
   return (
     <GuestLayout>
-      <Input type={"email"} placeholder={"Email"} required={true} uClass='w-2/3' className={'bg-[#F5F9F9]'} />
+      <Input type={"email"} placeholder={"Email"} required={true} uClass='w-full sm:w-2/3' className={'bg-[#F5F9F9]'} />
       <Input type={passwordVisibility} placeholder={"Password"} icon={
         <div onClick={handlePasswordVisibility}>
           {passwordVisibility === "password" ? <EyeIcon className='w-6 hover:text-gray-700 text-gray-400 duration-150' /> : <EyeSlashIcon className='w-6 hover:text-gray-700 text-gray-400 duration-150' />}
         </div>
-      } required={true} uClass='w-2/3' className={'bg-[#F5F9F9]'} />
-      <Button className={'rounded-full mt-20 w-2/3'} text={'Sign In'} />
+      } required={true} uClass='w-full sm:w-2/3' className={'bg-[#F5F9F9]'} />
+      <Button className={'rounded-full mt-20 w-full sm:w-2/3'} text={'Sign In'} />
     </GuestLayout>
   );
 };
