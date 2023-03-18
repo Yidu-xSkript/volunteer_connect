@@ -147,14 +147,18 @@ function Home() {
         <>
             <MissionSideBar showSidebar={showSidebar} onClick={hideSidebar} mission={missions[selectedMission]} />
             <AuthLayout>
-                <main className="container mx-auto px-5 lg:px-10 xl:px-0 flex py-14 space-x-5 lg:space-x-10 scrollbar-hide">
+                <main className="container mx-auto px-5 lg:px-10 xl:px-0 flex py-14 space-x-0 sm:space-x-5 lg:space-x-10 scrollbar-hide">
                     {/* Filter Component */}
-                    <div className="w-1/3">
+                    <div className="hidden sm:block w-1/3">
                         <Filter />
                     </div>
-                    <div className="w-2/3 space-y-7">
+                    <div className="w-full sm:w-2/3 space-y-7">
                         {/* Search Component */}
                         <Search />
+                        {/* Filter Component Mobile */}
+                        <div className="sm:hidden block">
+                            <Filter />
+                        </div>
                         {/* Missions */}
                         <div className="shadow shadow-slate-50 p-5 border border-gray-200 space-y-5 bg-white rounded-2xl">
                             {missions.map((mission) => (
