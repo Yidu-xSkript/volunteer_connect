@@ -16,7 +16,7 @@ function MissionSideBar({ showSidebar, onClick, mission }) {
         <div>
             <Apply showModal={showApply} close={() => setShowApply(false)} />
             {showSidebar && <div className="fixed top-0 right-0 w-screen h-screen bg-primary opacity-10 z-10" />}
-            <div id="m_sidebar" className={`fixed overflow-y-scroll top-0 right-0 h-screen w-2/5 bg-white shadow-2xl space-y-7 shadow-slate-50 border ease-in-out duration-1000 border-gray-200 px-10 pt-10 z-20 ${showSidebar ? "translate-x-0 block" : "translate-x-full"}`}>
+            <div id="m_sidebar" className={`fixed overflow-y-scroll top-0 right-0 h-screen lg:w-2/3 xl:w-1/2 2xl:w-2/5 w-full bg-white shadow-2xl space-y-7 shadow-slate-50 border ease-in-out duration-1000 border-gray-200 px-10 pt-10 z-20 ${showSidebar ? "translate-x-0 block" : "translate-x-full"}`}>
                 <div className="flex flex-col items-end">
                     <XMarkIcon className="w-8 cursor-pointer" onClick={onClick} />
                 </div>

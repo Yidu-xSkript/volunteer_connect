@@ -31,7 +31,7 @@ function Home() {
         },
         {
             id: 2,
-            image: 'https://www.logo.wine/a/logo/Plaid_(company)/Plaid_(company)-Logo.wine.svg',
+            image: 'https://seeklogo.com/images/H/hewlett-packard-company-logo-F5676A4E16-seeklogo.com.png',
             title: 'Mission Title 2',
             post_human_date: '2 Hours Ago',
             volunteering_hours: '5hrs/day',
@@ -51,7 +51,7 @@ function Home() {
         },
         {
             id: 3,
-            image: 'https://www.logo.wine/a/logo/Plaid_(company)/Plaid_(company)-Logo.wine.svg',
+            image: 'https://download.logo.wine/logo/The_Boring_Company/The_Boring_Company-Logo.wine.png',
             title: 'Mission Title 3',
             post_human_date: '2 Hours Ago',
             volunteering_hours: '5hrs/day',
@@ -71,7 +71,7 @@ function Home() {
         },
         {
             id: 4,
-            image: 'https://www.logo.wine/a/logo/Plaid_(company)/Plaid_(company)-Logo.wine.svg',
+            image: 'https://upload.wikimedia.org/wikipedia/commons/5/54/Computools_company_logo.png',
             title: 'Mission Title 4',
             post_human_date: '2 Hours Ago',
             volunteering_hours: '5hrs/day',
@@ -147,7 +147,7 @@ function Home() {
         <>
             <MissionSideBar showSidebar={showSidebar} onClick={hideSidebar} mission={missions[selectedMission]} />
             <AuthLayout>
-                <main className="container mx-auto flex py-14 space-x-10 scrollbar-hide">
+                <main className="container mx-auto px-5 lg:px-10 xl:px-0 flex py-14 space-x-5 lg:space-x-10 scrollbar-hide">
                     {/* Filter Component */}
                     <div className="w-1/3">
                         <Filter />
@@ -171,7 +171,7 @@ function Home() {
                                     volunteer_amount={mission.volunteer_amount}
                                     volunteering_hours={mission.volunteering_hours} />
                             ))}
-                            <div className="cursor-pointer text-lg text-center">Load More</div>
+                            <div className="cursor-pointer lg:text-lg text-base text-center">Load More</div>
                         </div>
                     </div>
                 </main>
