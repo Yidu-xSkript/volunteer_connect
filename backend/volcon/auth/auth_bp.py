@@ -78,3 +78,16 @@ def user():
         org_cruds = org_CRUDS()
         org_id = Organization.query.filter_by(user_id=user_id).first().org_id
         return org_cruds.get_org(org_id)
+
+@auth_bp.route('/user/<int:user_id>/update', methods=[PATCH])
+def update_user(user_id):
+    role = session.get('role')
+
+    if role == 'volunteer':
+        volunteer_cruds = vol_CRUDS()
+        vol_id = Volunteer.query.filter_by(user_id=user_id).first().volunteer_id
+        return volunteer_cruds.update_vol(vol_id)
+    elif role == 'organization':
+        organization_cruds = vol_CRUDS()
+        org_id = Organization.query.filter_by(user_id=user_id).first().org_id
+        return organization_cruds.update_org(org_id)
