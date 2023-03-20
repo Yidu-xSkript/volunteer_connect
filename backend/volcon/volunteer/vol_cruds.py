@@ -1,6 +1,6 @@
 from flask import jsonify, request
 from sqlalchemy.exc import SQLAlchemyError
-from volcon_db import db, Volunteer
+from models.volcon_db import db, Volunteer
 import uuid
 
 
@@ -21,14 +21,14 @@ class vol_CRUDS:
         except SQLAlchemyError as e:
             return jsonify({'error': str(e)}), 500
 
-    def get_vol(self, vol_id):
+    def get_vol(self, user_id):
         """Retrieving a Single Volunteer by ID"""
         try:
-            vol = Volunteer.query.filter_by(volunteer_id=vol_id).first()
+            vol = Volunteer.query.filter_by(id=user_id).first()
             if vol:
                 return jsonify(vol.to_dict())
             else:
-                return jsonify({'error': f'Volunteer with ID {vol_id} not found.'}), 404
+                return jsonify({'error': f'Volunteer with ID {user_id} not found.'}), 404
         except SQLAlchemyError as e:
             return jsonify({'error': str(e)}), 500
 
