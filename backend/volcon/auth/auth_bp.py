@@ -1,10 +1,11 @@
-from flask import jsonify, request, Blueprint, session
+from flask import jsonify, request, Blueprint
+from flask_jwt_extended import create_access_token, jwt_required, get_current_user, get_jwt
+from models.volcon_db import db, Volunteer, Organization, User, TokenBlocklist
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import generate_password_hash
-from volcon_db import db, Volunteer, Organization, User
-from vol_cruds import vol_CRUDS
-from org_cruds import org_CRUDS
-
+from volcon.volunteer.vol_cruds import vol_CRUDS
+from volcon.org.org_cruds import org_CRUDS
+from volcon.auth.authorization import check_access
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/v1/auth')
 
@@ -14,65 +15,66 @@ def signup():
         data = request.get_json()
         email = data['email']
         password = data['password']
+        name = data['name']
         role = data['role']
+
         if role == 'volunteer':
-            user = Volunteer(
-                email=email,
-                password=generate_password_hash(password, method='sha256')
-            )
+            user = Volunteer(email=email, password=generate_password_hash(password, method='sha256'), role=role, name=name)
         elif role == 'organization':
-            user = Organization(
-                email=email,
-                password=generate_password_hash(password, method='sha256')
-            )
+            user = Organization(email=email, password=generate_password_hash(password, method='sha256'), role=role, name=name)
         else:
             return jsonify({'error': 'Invalid role specified.'}), 400
+
+        access_token = create_access_token(identity=email)
+
         db.session.add(user)
         db.session.commit()
-        return jsonify({'message': 'User registered successfully.'}), 201
+
+        return jsonify({'user': user.serialize(), 'token': access_token}), 201
     except SQLAlchemyError as e:
         error = str(e.__dict__.get('orig', e))
         return jsonify({'error': error}), 500
-
 
 @auth_bp.route('/signin', methods=['POST'])
 def login():
     # retrieve credentials from request body
     data = request.get_json()
-    username = data.get('username')
+    email = data.get('email')
     password = data.get('password')
 
     # credentials verification against database
-    volunteer = Volunteer.query.filter_by(username=username, password=password).first()
-    organization = Organization.query.filter_by(username=username, password=password).first()
+    volunteer = Volunteer.query.filter_by(email=email).one_or_none()
+    organization = Organization.query.filter_by(email=email).one_or_none()
 
-    # check if user exists and assign session ID
-    if volunteer:
-        session['user_id'] = volunteer.volunteer_id
-        session['role'] = 'volunteer'
-        return jsonify({'message': 'Login successful'})
-    elif organization:
-        session['user_id'] = organization.org_id
-        session['role'] = 'organization'
-        return jsonify({'message': 'Login successful'})
+    if volunteer and volunteer.verify_password(password):
+        return jsonify({'user': volunteer.serialize(), 'token':  create_access_token(identity=email)}), 200
+
+    elif organization and organization.verify_password(password):
+        return jsonify({'user': organization.serialize(), 'token':  create_access_token(identity=email)}), 200
+
     else:
-        return jsonify({'error': 'Invalid username or password'}), 401
+        return jsonify({'error': 'Invalid email or Password'}), 401
 
+# Endpoint for revoking the current users access token. Saved the unique
+# identifier (jti) for the JWT into our database.
+@auth_bp.route('/logout', methods=['POST'])
+@jwt_required()
+def logout():
+    token = get_jwt()
+    jti = token["jti"]
+    ttype = token["type"]
+    db.session.add(TokenBlocklist(jti=jti, type=ttype))
+    db.session.commit()
+    return jsonify(msg=f"{ttype.capitalize()} token successfully revoked"), 200
+
+# Just to test role access jwt middleware => passed
+# Replace check_access decorator with @jwt_required
 @auth_bp.route('/user', methods=['GET'])
+@check_access(['volunteer', 'organization'])
 def user():
     """Retrieving User Information"""
-    # Fetching user_id from session instance
-    user_id = session.get('user_id')
-    role = session.get('role')
-
-    # check if user is authenticated
-    if not user_id:
-        return jsonify({'error': 'Unauthorized'}), 401
-
-    # User Information fetch based on role
-    if role == 'volunteer':
-        volunteer_cruds = vol_CRUDS()
-        return volunteer_cruds.get_vol(user_id)
-    elif role == 'organization':
-        org_cruds = org_CRUDS()
-        return org_cruds.get_org(user_id)
+    current_user: User = get_current_user()
+    if current_user.role == 'volunteer':
+        return vol_CRUDS().get_vol(current_user.id)
+    elif current_user.role == 'organization':
+        return org_CRUDS().get_org(current_user.id)
