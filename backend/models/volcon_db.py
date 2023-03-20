@@ -101,6 +101,17 @@ class Mission(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
+    def serialize(self):
+        return {
+            'mission_id': self.mission_id,
+            'org_id': self.org_id,
+            'name': self.name,
+            'description': self.description,
+            'location': self.location,
+            'start_date': self.start_date.isoformat(),
+            'end_date': self.end_date.isoformat()
+        }
+
 class Application(db.Model):
     """Defines the Application Table; 
     which has a 1:1 relationship with the `Missions` Table;
@@ -117,3 +128,14 @@ class Application(db.Model):
 
     mission = db.relationship('Mission', backref='applications')
     volunteer = db.relationship('Volunteer', backref='applications')
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'org_id': self.org_id,
+            'name': self.name,
+            'description': self.description,
+            'location': self.location,
+            'start_date': self.start_date.isoformat(),
+            'end_date': self.end_date.isoformat()
+        }
