@@ -116,7 +116,7 @@ function Mission() {
                         </div>}
                         {/* Checks if there are any missions created */}
                         {missions.length > 0 ?
-                            <div className="grid grid-cols-3 gap-7 my-10">
+                            <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-7 my-10">
                                 {missions.map((mission) => (
                                     // I'm referring to the attributes 1by1 for ease. I'm gonna pass the whole object later when i send a get request to the api.
                                     <OrgMissionCard

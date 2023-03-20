@@ -6,7 +6,7 @@ const dropdown = ({ options, className, selectClass, icon, required=false }) => 
             {options.map((op) => <option key={op.id} className='appearance-none' value={op.id} defaultValue={op.id === 1}>{op.name}</option>)}
         </select>
         <div className="absolute inset-y-0 right-0 flex items-center pr-3 z-10">
-            <ChevronDownIcon className='w-6 text-gray-400' />
+            <ChevronDownIcon className='lg:w-6 w-5 text-gray-400' />
         </div>
     </div>
 );
