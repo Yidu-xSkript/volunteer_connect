@@ -3,25 +3,24 @@
 
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
-
-
+from werkzeug.security import check_password_hash
+from flask_jwt_extended import get_current_user
 
 db = SQLAlchemy()
-
-
 class User(db.Model):
     """Defines the User Table on the Database"""
 
     __tablename__ = 'users'
 
-    user_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    phone_no = db.Column(db.String(20), nullable=False)
+    phone_no = db.Column(db.String(20), nullable=True)
+    image = db.Column(db.String(255), nullable=True)
     role = db.Column(db.String(20), nullable=False)
     password = db.Column(db.String(128), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
-
 
     __mapper_args__ = {
         'polymorphic_identity': 'user',
@@ -33,10 +32,9 @@ class Volunteer(User):
 
     __tablename__ = 'volunteers'
 
-    volunteer_id = db.Column(db.Integer, primary_key=True)
-    full_name = db.Column(db.String(255), nullable=False)
-    age = db.Column(db.Integer, nullable=False)
-    profile_pic = db.Column(db.LargeBinary(), nullable=True)
+    id = db.Column(db.Integer, db.ForeignKey(User.id), primary_key=True)
+    # user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    age = db.Column(db.Integer, nullable=True)
 
     __mapper_args__ = {
         'polymorphic_identity': 'volunteer'
@@ -45,9 +43,10 @@ class Volunteer(User):
     def to_dict(self):
         """A Function to Convert Volunteer Object to Python Dict"""
         return {
-            'volunteer_id':self.volunteer_id,
-            'name': self.full_name,
-            'profile_pic': self.profile_pic,
+            'id':self.id,
+            'name': self.name,
+            'age': self.age,
+            'image': self.image,
             'email': self.email,
             'phone_no': self.phone_no,
             'role': self.role,
@@ -55,16 +54,31 @@ class Volunteer(User):
             'updated_at': self.updated_at
         }
 
+    def serialize(self):
+        return {
+            'id':self.id,
+            'age': self.age,
+            'name': self.name,
+            'image': self.image,
+            'email': self.email,
+            'phone_no': self.phone_no,
+            'role': self.role,
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat()
+        }
+
+    def verify_password(self, pwd):
+        return check_password_hash(self.password, pwd)
+
 class Organization(User):
     """Defines the Organization Table; which is a Child Table of the User Table"""
 
     __tablename__ = 'organizations'
 
-    org_id = db.Column(db.Integer, primary_key=True)
-    org_name = db.Column(db.String(255), nullable=False)
-    location = db.Column(db.String(255), nullable=False)
+    id = db.Column(db.Integer, db.ForeignKey(User.id), primary_key=True)
+    # user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    location = db.Column(db.String(255), nullable=True)
     biography = db.Column(db.Text, nullable=True)
-    profile_logo = db.Column(db.LargeBinary(), nullable=True)
 
     __mapper_args__ = {
         'polymorphic_identity': 'organization'
@@ -73,16 +87,32 @@ class Organization(User):
     def to_dict(self):
         """Function to Convert entry data to a python dict"""
         return {
-            'org_id': self.org_id,
-            'org_name': self.org_name,
+            'id': self.id,
+            'org_name': self.name,
             'location': self.location,
             'biography': self.biography,
-            'profile_logo': self.profile_logo,
+            'image': self.image,
             'email': self.email,
             'phone_no': self.phone_no,
             'created_at': self.created_at,
             'updated_at': self.updated_at
         }
+
+    def serialize(self):
+        return {
+            'id':self.id,
+            'age': self.age,
+            'name': self.name,
+            'image': self.image,
+            'email': self.email,
+            'phone_no': self.phone_no,
+            'role': self.role,
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat()
+        }
+
+    def verify_password(self, pwd):
+        return check_password_hash(self.password, pwd)
 
 class Mission(db.Model):
     """Defines the Mission Table; Which is a Child Table for the User Table
@@ -90,8 +120,8 @@ class Mission(db.Model):
 
     __tablename__ = 'missions'
 
-    mission_id = db.Column(db.Integer, primary_key=True)
-    org_id = db.Column(db.Integer, db.ForeignKey('organizations.org_id'), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    org_id = db.Column(db.Integer, db.ForeignKey('organizations.id'), nullable=False)
     name = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, nullable=False)
     image = db.Column(db.String(255), nullable=True)
@@ -113,15 +143,15 @@ class Mission(db.Model):
         }
 
 class Application(db.Model):
-    """Defines the Application Table; 
+    """Defines the Application Table;
     which has a 1:1 relationship with the `Missions` Table;
     """
 
     __tablename__ = 'applications'
 
-    application_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('volunteers.user_id'), nullable=False)
-    mission_id = db.Column(db.Integer, db.ForeignKey('missions.mission_id'), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('volunteers.id'), nullable=False)
+    mission_id = db.Column(db.Integer, db.ForeignKey('missions.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
     status = db.Column(db.Boolean, nullable=True)
@@ -139,3 +169,23 @@ class Application(db.Model):
             'start_date': self.start_date.isoformat(),
             'end_date': self.end_date.isoformat()
         }
+
+
+# This could be expanded to fit the needs of your application. For example,
+# it could track who revoked a JWT, when a token expires, notes for why a
+# JWT was revoked, an endpoint to un-revoked a JWT, etc.
+# Making jti an index can significantly speed up the search when there are
+# tens of thousands of records. Remember this query will happen for every
+# (protected) request,
+# If your database supports a UUID type, this can be used for the jti column
+# as well
+class TokenBlocklist(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    jti = db.Column(db.String(36), nullable=False, index=True)
+    type = db.Column(db.String(16), nullable=False)
+    user_id = db.Column(
+        db.ForeignKey('users.id'),
+        default=lambda: get_current_user().id,
+        nullable=False,
+    )
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
