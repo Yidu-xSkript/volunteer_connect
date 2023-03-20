@@ -2,7 +2,7 @@ from flask import jsonify, request
 from sqlalchemy.exc import SQLAlchemyError
 from volcon_db import db, Mission
 
-class mission_cruds:
+class mission_CRUDS:
     @staticmethod
     def create_mission(org_id):
         try:

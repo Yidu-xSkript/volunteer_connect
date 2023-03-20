@@ -2,6 +2,9 @@ from flask import jsonify, request, Blueprint, session
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import generate_password_hash
 from volcon_db import db, Volunteer, Organization, User
+from vol_cruds import vol_CRUDS
+from org_cruds import org_CRUDS
+
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/v1/auth')
 
@@ -33,7 +36,6 @@ def signup():
 
 
 @auth_bp.route('/signin', methods=['POST'])
-"""A sign-in API route Complete with Session Management"""
 def login():
     # retrieve credentials from request body
     data = request.get_json()
@@ -54,4 +56,23 @@ def login():
         session['role'] = 'organization'
         return jsonify({'message': 'Login successful'})
     else:
-        return jsonify({'error': 'Invalid username or password'}), 401)
+        return jsonify({'error': 'Invalid username or password'}), 401
+
+@auth_bp.route('/user', methods=['GET'])
+def user():
+    """Retrieving User Information"""
+    # Fetching user_id from session instance
+    user_id = session.get('user_id')
+    role = session.get('role')
+
+    # check if user is authenticated
+    if not user_id:
+        return jsonify({'error': 'Unauthorized'}), 401
+
+    # User Information fetch based on role
+    if role == 'volunteer':
+        volunteer_cruds = vol_CRUDS()
+        return volunteer_cruds.get_vol(user_id)
+    elif role == 'organization':
+        org_cruds = org_CRUDS()
+        return org_cruds.get_org(user_id)
