@@ -8,7 +8,8 @@ from org_cruds import org_CRUDS
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/v1/auth')
 
-@auth_bp.route('/signup', methods=['POST'])
+
+@auth_bp.route('/signup', methods=['POST'], strict_slashes=False)
 def signup():
     try:
         data = request.get_json()
@@ -35,7 +36,7 @@ def signup():
         return jsonify({'error': error}), 500
 
 
-@auth_bp.route('/signin', methods=['POST'])
+@auth_bp.route('/signin', methods=['POST'], strict_slashes=False)
 def login():
     # retrieve credentials from request body
     data = request.get_json()
@@ -58,7 +59,8 @@ def login():
     else:
         return jsonify({'error': 'Invalid username or password'}), 401
 
-@auth_bp.route('/user', methods=['GET'])
+
+@auth_bp.route('/user', methods=['GET'], strict_slashes=False)
 def user():
     """Retrieving User Information"""
     # Fetching user_id from session instance
@@ -78,3 +80,17 @@ def user():
         org_cruds = org_CRUDS()
         org_id = Organization.query.filter_by(user_id=user_id).first().org_id
         return org_cruds.get_org(org_id)
+
+
+@auth_bp.route('/user/<int:user_id>/update', methods=['PATCH'], strict_slashes=False)
+def update_user(user_id):
+    role = session.get('role')
+
+    if role == 'volunteer':
+        volunteer_cruds = vol_CRUDS()
+        vol_id = Volunteer.query.filter_by(user_id=user_id).first().volunteer_id
+        return volunteer_cruds.update_vol(vol_id)
+    elif role == 'organization':
+        organization_cruds = vol_CRUDS()
+        org_id = Organization.query.filter_by(user_id=user_id).first().org_id
+        return organization_cruds.update_org(org_id)
