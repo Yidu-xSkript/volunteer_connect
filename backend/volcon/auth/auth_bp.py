@@ -72,7 +72,9 @@ def user():
     # User Information fetch based on role
     if role == 'volunteer':
         volunteer_cruds = vol_CRUDS()
-        return volunteer_cruds.get_vol(user_id)
+        vol_id = Volunteer.query.filter_by(user_id=user_id).first().volunteer_id
+        return volunteer_cruds.get_vol(vol_id)
     elif role == 'organization':
         org_cruds = org_CRUDS()
-        return org_cruds.get_org(user_id)
+        org_id = Organization.query.filter_by(user_id=user_id).first().org_id
+        return org_cruds.get_org(org_id)

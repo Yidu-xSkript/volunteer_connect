@@ -6,7 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from volcon_db import db, Applications
 
 
-class application_cruds:
+class application_CRUDS:
     @staticmethod
     def create_application():
         try:
