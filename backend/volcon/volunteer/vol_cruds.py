@@ -4,7 +4,7 @@ from volcon_db import db, Volunteer
 import uuid
 
 
-class vol_cruds:
+class vol_CRUDS:
     """
     A Class That Defined all API CRUD Methods
     For All Volunteer Objects

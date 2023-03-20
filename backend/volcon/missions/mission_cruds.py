@@ -2,7 +2,7 @@ from flask import jsonify, request
 from sqlalchemy.exc import SQLAlchemyError
 from volcon_db import db, Mission
 
-class mission_cruds:
+class mission_CRUDS:
     @staticmethod
     def create_mission(org_id):
         try:
@@ -75,15 +75,3 @@ class mission_cruds:
         except SQLAlchemyError as e:
             error = str(e.__dict__.get('orig', e))
             return jsonify({'error': error}), 500
-
-        @staticmethod
-        def serialize(self):
-            return {
-                'mission_id': self.mission_id,
-                'org_id': self.org_id,
-                'name': self.name,
-                'description': self.description,
-                'location': self.location,
-                'start_date': self.start_date.isoformat(),
-                'end_date': self.end_date.isoformat()
-            }
