@@ -14,7 +14,8 @@ function Profile() {
         image: 'https://media.istockphoto.com/id/1288634698/photo/beautiful-caucasian-teenager-smiling-happy-standing-at-the-city.jpg?s=170667a&w=0&k=20&c=fXAqV1uAAt78wOrP5QQrrVIrOYgJ8aBZqKwpexpDfSw=',
         name: 'Yididya Goitom',
         bio: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-        phone_number: '+251932382336'
+        phone_number: '+251932382336',
+        location: 'Ethiopia'
     }
 
     const inputRef = useRef()
@@ -40,6 +41,7 @@ function Profile() {
                         {!editMode && <p className="text-gray-600 xl:text-base sm:text-sm text-xs select-none">{userinfo.bio}</p>}
                         {editMode && <textarea className={`w-full text-gray-900 xl:text-base sm:text-sm text-xs h-32 border-b border-gray-300 focus:outline-none`} value={userinfo.bio} onChange={bio} placeholder={userinfo.bio}></textarea>}
                         <p className="text-gray-600 select-none"><span className="font-semibold text-black">Phone Number</span>: {!editMode ? userinfo.phone_number : <input value={userinfo.phone_number} onChange={phone_number} className={`duration-150 focus:bg-white border-b border-gray-300 focus:outline-none`} type="text" placeholder={userinfo.name} required />}</p>
+                        <p className="text-gray-600 select-none"><span className="font-semibold text-black">Location</span>: {!editMode ? userinfo.location : <input value={userinfo.phone_number} onChange={phone_number} className={`duration-150 focus:bg-white border-b border-gray-300 focus:outline-none`} type="text" placeholder={userinfo.name} required />}</p>
                     </div>
                 </div>
             </div>

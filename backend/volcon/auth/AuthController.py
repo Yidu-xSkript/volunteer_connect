@@ -5,12 +5,11 @@ from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import generate_password_hash
 from volcon.volunteer.vol_cruds import vol_CRUDS
 from volcon.org.org_cruds import org_CRUDS
-from volcon.auth.authorization import check_access
+# from volcon.auth.authorization import check_access
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/v1/auth')
 
-
-@auth_bp.route('/signup', methods=['POST'], strict_slashes=False)
+@auth_bp.route('/signup', methods=['POST'])
 def signup():
     try:
         data = request.get_json()
@@ -36,7 +35,7 @@ def signup():
         error = str(e.__dict__.get('orig', e))
         return jsonify({'error': error}), 500
 
-@auth_bp.route('/signin', methods=['POST'], strict_slashes=False)
+@auth_bp.route('/signin', methods=['POST'])
 def login():
     # retrieve credentials from request body
     data = request.get_json()
@@ -68,10 +67,11 @@ def logout():
     db.session.commit()
     return jsonify(msg=f"{ttype.capitalize()} token successfully revoked"), 200
 
-# Just to test role access jwt middleware => passed
+# Just to test role access jwt middleware (check_access) => passed
 # Replace check_access decorator with @jwt_required
-@auth_bp.route('/user', methods=['GET'], strict_slashes=False)
-@check_access(['volunteer', 'organization'])
+@auth_bp.route('/user', methods=['GET'])
+@jwt_required()
+# @check_access(['volunteer', 'organization'])
 def user():
     """Retrieving User Information"""
     current_user: User = get_current_user()
@@ -80,15 +80,24 @@ def user():
     elif current_user.role == 'organization':
         return org_CRUDS().get_org(current_user.id)
 
+# On-Boarding
+# Both have bio - remove bio from organization table and add it to user table
+# Add resume to volunteer table.
+# We don't use session anymore since we're using tokens to track users.
 @auth_bp.route('/user/<int:user_id>/update', methods=['PATCH'], strict_slashes=False)
+@jwt_required()
 def update_user(user_id):
-    role = session.get('role')
+    current_user: User = get_current_user()
+    if current_user.role == 'volunteer':
+        vol_id = Volunteer.query.filter_by(user_id=user_id).one_or_none().id
+        return vol_CRUDS().update_vol(vol_id)
+    elif current_user.role == 'organization':
+        org_id = Organization.query.filter_by(user_id=user_id).one_or_none().id
+        return org_CRUDS().update_org(org_id)
 
-    if role == 'volunteer':
-        volunteer_cruds = vol_CRUDS()
-        vol_id = Volunteer.query.filter_by(user_id=user_id).first().volunteer_id
-        return volunteer_cruds.update_vol(vol_id)
-    elif role == 'organization':
-        organization_cruds = vol_CRUDS()
-        org_id = Organization.query.filter_by(user_id=user_id).first().org_id
-        return organization_cruds.update_org(org_id)
+@auth_bp.route('/user/<int:user_id>/image/update', methods=['PATCH'], strict_slashes=False)
+@jwt_required()
+def updateUserImage(userId):
+    user: User = User.query.filter_by(user_id=userId).one_or_none()
+    user.updateImage(request.get_json().get('image', user.image))
+    return jsonify({'image': user.image})

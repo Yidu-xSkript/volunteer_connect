@@ -63,6 +63,25 @@ class vol_CRUDS:
             db.session.rollback()
             return jsonify({'error': str(e)}), 500
 
+    def update_volB(self, vol_id):
+        """Updating Details of an Existing Volunteer -- OnBoarding"""
+        try:
+            data = request.get_json()
+            vol: Volunteer = Volunteer.query.filter_by(volunteer_id=vol_id).first()
+            if not vol:
+                return jsonify({'error': f'Volunteer with ID {vol_id} not found.'}), 404
+            vol.name = data.get('name', vol.name)
+            # vol.age = data.get('age', vol.age)
+            vol.phone_no = data.get('phone_no', vol.phone_no)
+            vol.image = data.get('image', vol.image)
+            vol.biography = data.get('bio', vol.biography)
+            vol.resume = data.get('resume', vol.resume)
+            db.session.commit()
+            return jsonify(vol.serialize()), 200
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return jsonify({'error': str(e)}), 500
+
     def delete_vol(self, vol_id):
         """Deleting an Existing Volunteer"""
         try:

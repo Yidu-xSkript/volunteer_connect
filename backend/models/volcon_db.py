@@ -19,6 +19,7 @@ class User(db.Model):
     image = db.Column(db.String(255), nullable=True)
     role = db.Column(db.String(20), nullable=False)
     password = db.Column(db.String(128), nullable=False)
+    biography = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
@@ -27,13 +28,17 @@ class User(db.Model):
         'polymorphic_on': role
     }
 
+    def updateImage(self, imgPath):
+        self.image = imgPath
+        db.session.commit()
+
 class Volunteer(User):
     """Defines the Volunteers table; which is a Child Table of the User Table"""
 
     __tablename__ = 'volunteers'
 
     id = db.Column(db.Integer, db.ForeignKey(User.id), primary_key=True)
-    # user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    resume = db.Column(db.String(255), nullable=True)
     age = db.Column(db.Integer, nullable=True)
 
     __mapper_args__ = {
@@ -50,6 +55,8 @@ class Volunteer(User):
             'email': self.email,
             'phone_no': self.phone_no,
             'role': self.role,
+            'bio': self.biography,
+            'resume': self.resume,
             'created_at': self.created_at,
             'updated_at': self.updated_at
         }
@@ -63,6 +70,8 @@ class Volunteer(User):
             'email': self.email,
             'phone_no': self.phone_no,
             'role': self.role,
+            'bio': self.biography,
+            'resume': self.resume,
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat()
         }
@@ -76,9 +85,7 @@ class Organization(User):
     __tablename__ = 'organizations'
 
     id = db.Column(db.Integer, db.ForeignKey(User.id), primary_key=True)
-    # user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     location = db.Column(db.String(255), nullable=True)
-    biography = db.Column(db.Text, nullable=True)
 
     __mapper_args__ = {
         'polymorphic_identity': 'organization'
@@ -88,11 +95,12 @@ class Organization(User):
         """Function to Convert entry data to a python dict"""
         return {
             'id': self.id,
-            'org_name': self.name,
+            'name': self.name,
             'location': self.location,
-            'biography': self.biography,
+            'bio': self.biography,
             'image': self.image,
             'email': self.email,
+            'role': self.role,
             'phone_no': self.phone_no,
             'created_at': self.created_at,
             'updated_at': self.updated_at
@@ -101,8 +109,9 @@ class Organization(User):
     def serialize(self):
         return {
             'id':self.id,
-            'age': self.age,
             'name': self.name,
+            'location': self.location,
+            'bio': self.biography,
             'image': self.image,
             'email': self.email,
             'phone_no': self.phone_no,

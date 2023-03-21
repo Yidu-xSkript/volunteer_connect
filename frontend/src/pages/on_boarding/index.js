@@ -73,6 +73,7 @@ function OnBoarding() {
                 <div className="md:w-2/3 w-full">
                   <Input placeholder={'Organization name'} required={true} type={'text'} className={'w-full border border-gray-100 shadow'} />
                   <Input placeholder={'Phone Number'} required={true} type={'number'} className={'border border-gray-100 shadow'} />
+                  <Input placeholder={'Location'} required={true} type={'text'} className={'border border-gray-100 shadow'} />
                 </div>
               </div>
               <div className="w-full px-0 md:px-20 my-0 md:my-10">

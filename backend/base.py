@@ -1,6 +1,6 @@
 from flask import Flask
 from models.volcon_db import db, User, TokenBlocklist
-from volcon.auth.auth_bp import auth_bp
+from volcon.auth.AuthController import auth_bp
 from datetime import timedelta, datetime, timezone
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
     JWTManager
