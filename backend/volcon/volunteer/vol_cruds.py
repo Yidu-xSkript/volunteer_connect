@@ -1,6 +1,6 @@
 from flask import jsonify, request
 from sqlalchemy.exc import SQLAlchemyError
-from volcon_db import db, Volunteer
+from models.volcon_db import db, Volunteer
 import uuid
 
 
@@ -21,14 +21,14 @@ class vol_CRUDS:
         except SQLAlchemyError as e:
             return jsonify({'error': str(e)}), 500
 
-    def get_vol(self, vol_id):
+    def get_vol(self, user_id):
         """Retrieving a Single Volunteer by ID"""
         try:
-            vol = Volunteer.query.filter_by(volunteer_id=vol_id).first()
+            vol = Volunteer.query.filter_by(id=user_id).first()
             if vol:
                 return jsonify(vol.to_dict())
             else:
-                return jsonify({'error': f'Volunteer with ID {vol_id} not found.'}), 404
+                return jsonify({'error': f'Volunteer with ID {user_id} not found.'}), 404
         except SQLAlchemyError as e:
             return jsonify({'error': str(e)}), 500
 
@@ -59,6 +59,25 @@ class vol_CRUDS:
             vol.profile_pic = data.get('profile_pic', vol.profile_pic)
             db.session.commit()
             return jsonify(vol.to_dict()), 200
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return jsonify({'error': str(e)}), 500
+
+    def update_volB(self, vol_id):
+        """Updating Details of an Existing Volunteer -- OnBoarding"""
+        try:
+            data = request.get_json()
+            vol: Volunteer = Volunteer.query.filter_by(volunteer_id=vol_id).first()
+            if not vol:
+                return jsonify({'error': f'Volunteer with ID {vol_id} not found.'}), 404
+            vol.name = data.get('name', vol.name)
+            # vol.age = data.get('age', vol.age)
+            vol.phone_no = data.get('phone_no', vol.phone_no)
+            vol.image = data.get('image', vol.image)
+            vol.biography = data.get('bio', vol.biography)
+            vol.resume = data.get('resume', vol.resume)
+            db.session.commit()
+            return jsonify(vol.serialize()), 200
         except SQLAlchemyError as e:
             db.session.rollback()
             return jsonify({'error': str(e)}), 500

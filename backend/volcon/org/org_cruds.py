@@ -3,7 +3,7 @@
 
 from flask import jsonify, request
 from sqlalchemy.exc import SQLAlchemyError
-from volcon_db import db, Organization
+from models.volcon_db import db, Organization
 
 class org_CRUDS:
     def __init__(self):
@@ -56,6 +56,25 @@ class org_CRUDS:
                 org.profile_logo = data.get('profile_logo', org.profile_logo)
                 db.session.commit()
                 return jsonify(org.to_dict())
+            else:
+                return jsonify({'error': f'Organization with ID {org_id} not found.'}), 404
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return jsonify({'error': str(e)}), 500
+
+    def update_org(self, org_id):
+        """Updating Details of an Existing Organization -- OnBoarding"""
+        try:
+            data = request.get_json()
+            org: Organization = Organization.query.filter_by(org_id=org_id).first()
+            if org:
+                org.name = data.get('name', org.name)
+                org.location = data.get('location', org.location)
+                org.phone_no = data.get('phone_no', org.phone_no)
+                org.biography = data.get('bio', org.biography)
+                org.image = data.get('image', org.image)
+                db.session.commit()
+                return jsonify(org.serialize())
             else:
                 return jsonify({'error': f'Organization with ID {org_id} not found.'}), 404
         except SQLAlchemyError as e:
