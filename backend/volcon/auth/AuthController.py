@@ -89,15 +89,13 @@ def user():
 def update_user(user_id):
     current_user: User = get_current_user()
     if current_user.role == 'volunteer':
-        vol_id = Volunteer.query.filter_by(user_id=user_id).one_or_none().id
-        return vol_CRUDS().update_vol(vol_id)
+        return vol_CRUDS().update_vol(user_id)
     elif current_user.role == 'organization':
-        org_id = Organization.query.filter_by(user_id=user_id).one_or_none().id
-        return org_CRUDS().update_org(org_id)
+        return org_CRUDS().update_org(user_id)
 
 @auth_bp.route('/user/<int:user_id>/image/update', methods=['PATCH'], strict_slashes=False)
 @jwt_required()
 def updateUserImage(userId):
-    user: User = User.query.filter_by(user_id=userId).one_or_none()
+    user: User = User.query.filter_by(id=userId).one_or_none()
     user.updateImage(request.get_json().get('image', user.image))
     return jsonify({'image': user.image})

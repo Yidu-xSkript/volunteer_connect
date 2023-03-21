@@ -48,25 +48,7 @@ class org_CRUDS:
         """Updating Details of an Existing Organization"""
         try:
             data = request.get_json()
-            org = Organization.query.filter_by(org_id=org_id).first()
-            if org:
-                org.org_name = data.get('org_name', org.org_name)
-                org.location = data.get('location', org.location)
-                org.biography = data.get('biography', org.biography)
-                org.profile_logo = data.get('profile_logo', org.profile_logo)
-                db.session.commit()
-                return jsonify(org.to_dict())
-            else:
-                return jsonify({'error': f'Organization with ID {org_id} not found.'}), 404
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            return jsonify({'error': str(e)}), 500
-
-    def update_org(self, org_id):
-        """Updating Details of an Existing Organization -- OnBoarding"""
-        try:
-            data = request.get_json()
-            org: Organization = Organization.query.filter_by(org_id=org_id).first()
+            org: Organization = Organization.query.filter_by(id=org_id).first()
             if org:
                 org.name = data.get('name', org.name)
                 org.location = data.get('location', org.location)
@@ -74,7 +56,7 @@ class org_CRUDS:
                 org.biography = data.get('bio', org.biography)
                 org.image = data.get('image', org.image)
                 db.session.commit()
-                return jsonify(org.serialize())
+                return jsonify(org.to_dict())
             else:
                 return jsonify({'error': f'Organization with ID {org_id} not found.'}), 404
         except SQLAlchemyError as e:

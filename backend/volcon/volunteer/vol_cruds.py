@@ -49,35 +49,19 @@ class vol_CRUDS:
         """Updating Details of an Existing Volunteer"""
         try:
             data = request.get_json()
-            vol = Volunteer.query.filter_by(volunteer_id=vol_id).first()
+            vol: Volunteer = Volunteer.query.filter_by(id=vol_id).first()
             if not vol:
                 return jsonify({'error': f'Volunteer with ID {vol_id} not found.'}), 404
-            vol.full_name = data.get('full_name', vol.full_name)
-            vol.age = data.get('age', vol.age)
-            vol.email = data.get('email', vol.email)
-            vol.phone_no = data.get('phone_no', vol.phone_no)
-            vol.profile_pic = data.get('profile_pic', vol.profile_pic)
-            db.session.commit()
-            return jsonify(vol.to_dict()), 200
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            return jsonify({'error': str(e)}), 500
-
-    def update_volB(self, vol_id):
-        """Updating Details of an Existing Volunteer -- OnBoarding"""
-        try:
-            data = request.get_json()
-            vol: Volunteer = Volunteer.query.filter_by(volunteer_id=vol_id).first()
-            if not vol:
-                return jsonify({'error': f'Volunteer with ID {vol_id} not found.'}), 404
+            # vol.full_name = data.get('full_name', vol.full_name)
             vol.name = data.get('name', vol.name)
             # vol.age = data.get('age', vol.age)
+            # vol.email = data.get('email', vol.email)
             vol.phone_no = data.get('phone_no', vol.phone_no)
             vol.image = data.get('image', vol.image)
-            vol.biography = data.get('bio', vol.biography)
             vol.resume = data.get('resume', vol.resume)
+            vol.biography = data.get('bio', vol.biography)
             db.session.commit()
-            return jsonify(vol.serialize()), 200
+            return jsonify(vol.to_dict()), 200
         except SQLAlchemyError as e:
             db.session.rollback()
             return jsonify({'error': str(e)}), 500
