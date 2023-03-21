@@ -45,22 +45,6 @@ class Volunteer(User):
         'polymorphic_identity': 'volunteer'
     }
 
-    def to_dict(self):
-        """A Function to Convert Volunteer Object to Python Dict"""
-        return {
-            'id':self.id,
-            'name': self.name,
-            'age': self.age,
-            'image': self.image,
-            'email': self.email,
-            'phone_no': self.phone_no,
-            'role': self.role,
-            'bio': self.biography,
-            'resume': self.resume,
-            'created_at': self.created_at,
-            'updated_at': self.updated_at
-        }
-
     def serialize(self):
         return {
             'id':self.id,
@@ -90,21 +74,6 @@ class Organization(User):
     __mapper_args__ = {
         'polymorphic_identity': 'organization'
     }
-
-    def to_dict(self):
-        """Function to Convert entry data to a python dict"""
-        return {
-            'id': self.id,
-            'name': self.name,
-            'location': self.location,
-            'bio': self.biography,
-            'image': self.image,
-            'email': self.email,
-            'role': self.role,
-            'phone_no': self.phone_no,
-            'created_at': self.created_at,
-            'updated_at': self.updated_at
-        }
 
     def serialize(self):
         return {
