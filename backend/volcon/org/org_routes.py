@@ -7,7 +7,7 @@ from mission_cruds import mission_CRUDS
 org_bp = Blueprint('org_bp', __name__, url_prefix='/api/v1/organisation')
 
 
-@org_bp.route('/missions')
+@org_bp.route('/missions', method=['GET'])
 @jwt_required()
 def get_organizer_missions():
     """Returns missions that an organizer created based on the user_id that has the role of an organizer"""
@@ -20,7 +20,7 @@ def get_organizer_missions():
         return jsonify({'message': 'User not found.'}), 404
 
 
-@org_bp.route('/missions/<int:mission_id>', methods=['PATCH'])
+@org_bp.route('/missions/<string:mission_id>', methods=['PATCH'], strict_slashes=False)
 @jwt_required()
 def update_mission(mission_id):
     """Updates a mission based on the mission_id and user_id"""
@@ -57,3 +57,13 @@ def update_mission(mission_id):
     except:
         db.session.rollback()
         return jsonify({'message': 'Error updating mission.'}), 500
+
+
+@org_bp.route('/mission', method=['POST'], strict_slashes=False)
+@jwt_required()
+def new_mission():
+    """Route that Creates a New Mission for an Organization"""
+    current_user_id = get_jwt_identity()
+
+    new_mission = mission_CRUDS.create_mission(current_user_id)
+    return jsonify(serialize(new_mission))
