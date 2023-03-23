@@ -5,7 +5,8 @@ function API() {
     const api_url = dev_api_url;
 
     return {
-        'auth_api_url': `${api_url}/auth`
+        'auth_api_url': `/auth`,
+        'base_api_url': api_url
     }
 }
 
