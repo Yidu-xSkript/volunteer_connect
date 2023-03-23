@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ChevronRightIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import Button from "../../components/form/button";
 import AuthLayout from "../../Layout/Auth";
+// import axios from "axios";
 
 function Applicants() {
     const [selectedApplicant, setSelectedApplicant] = useState();
@@ -56,12 +57,20 @@ function Applicants() {
 
     }
 
+    function downloadFile() {
+        /* This causes a CORS issue  so i should send send a get request to the backend api to download instead of using the frontend. */
+        // var filename = applicants[selectedApplicant].resume.toString().match(/[^/\\&?]+\.\w{3,4}(?=([?&].*$|$))/)
+        // axios.get(applicants[selectedApplicant].resume, { responseType: 'blob', crossDomain: true }).then(res => (
+        //     fileDownload(res.data, filename[0])
+        // )).catch(err => console.log(err))
+    }
+
     return (
         <AuthLayout>
             <div className="block xl:flex px-5 py-10 sm:p-20 xl:space-x-7 space-y-7 xl:space-y-0">
                 <div className="w-full xl:w-2/5 h-96 overflow-y-auto border border-gray-300 shadow rounded-3xl">
                     {applicants.map((applicant, index) => (
-                        <>
+                        <div key={index}>
                             <div className={`hover:bg-gray-50 p-5 space-x-3 w-full cursor-pointer flex items-center`} onClick={() => setSelectedApplicant(index)}>
                                 <img src={applicant.image} className="sm:w-24 sm:h-24 w-16 h-16 object-cover border border-gray-500 shadow rounded-full" alt={applicant.name} />
                                 <div className="flex w-full justify-between items-center">
@@ -72,8 +81,8 @@ function Applicants() {
                                     <ChevronRightIcon className="w-6" />
                                 </div>
                             </div>
-                            { applicants.length - 1 === index && <hr className="h-px bg-gray-100 border-0 w-full" />}
-                        </>
+                            {applicants.length - 1 === index && <hr className="h-px bg-gray-100 border-0 w-full" />}
+                        </div>
                     ))}
                 </div>
                 {!isNaN(selectedApplicant) && <div className="h-full xl:w-3/4 w-full border border-gray-300 shadow rounded-3xl">
@@ -101,7 +110,7 @@ function Applicants() {
                     </div>
                     <hr className="h-px bg-gray-100 border-0 w-full" />
                     <div className="p-10">
-                        <Button text={"Download Resume"} className="rounded-full" />
+                        <Button text={"Download Resume"} action={downloadFile} className="rounded-full" />
                     </div>
                 </div>}
             </div>
