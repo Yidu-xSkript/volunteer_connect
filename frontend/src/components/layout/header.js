@@ -2,9 +2,9 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { UserIcon, Bars3BottomRightIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import useToken from "../../hooks/useToken";
-import axios from "axios";
 import API from "../../utils/API";
 import useUser from "../../hooks/useUser";
+import AxiosService from "../../services/axios.services";
 
 function Header() {
     const [showDropdown, setShowDropdown] = useState(false)
@@ -16,8 +16,12 @@ function Header() {
     const { removeUser } = useUser()
     const { auth_api_url } = API()
     const navigate = useNavigate()
+    const { _api } = AxiosService()
+    const { user } = useUser()
+    const _user = JSON.parse(user)
+
     const handleSignOut = () => {
-        axios.post(`${auth_api_url}/logout`, {}, {headers: {Authorization: `Bearer ${token}`}})
+        _api.post(`${auth_api_url}/logout`, {}, {headers: {Authorization: `Bearer ${token}`}})
             .then(res => {
                 removeToken()
                 removeUser()
@@ -33,17 +37,17 @@ function Header() {
 
             <div className="space-x-5 lg:block hidden">
                 <NavLink className={({ isActive }) => isActive ? "text-black" : "text-gray-400 hover:text-black"} to="/">Find Missions</NavLink>
-                <NavLink className={({ isActive }) => isActive ? "text-black" : "text-gray-400 hover:text-black"} to="/missions">Missions</NavLink>
-                <NavLink className={({ isActive }) => isActive ? "text-black" : "text-gray-400 hover:text-black"} to="/applications">Applications</NavLink>
-                <NavLink className={({ isActive }) => isActive ? "text-black" : "text-gray-400 hover:text-black"} to="/applicants">Applicants</NavLink>
+                {_user.role === "organization" && <NavLink className={({ isActive }) => isActive ? "text-black" : "text-gray-400 hover:text-black"} to="/missions">Missions</NavLink>}
+                {_user.role === "volunteer" && <NavLink className={({ isActive }) => isActive ? "text-black" : "text-gray-400 hover:text-black"} to="/applications">Applications</NavLink>}
+                {_user.role === "organization" && <NavLink className={({ isActive }) => isActive ? "text-black" : "text-gray-400 hover:text-black"} to="/applicants">Applicants</NavLink>}
             </div>
 
             <div className="relative lg:block hidden">
                 <div className="flex items-center space-x-3 cursor-pointer" onClick={handleDropdown}>
                     <UserIcon className="w-10 p-2 rounded-full bg-[#F5F9F9]" />
                     <div>
-                        <h4 className="font-bold text-sm">Yididya Goitom</h4>
-                        <p className="text-gray-400 text-xs">email@example.com</p>
+                        <h4 className="font-bold text-sm">{_user.name}</h4>
+                        <p className="text-gray-400 text-xs">{_user.email}</p>
                     </div>
                 </div>
                 {showDropdown && <div className="absolute right-0 z-10 block bg-white divide-y divide-gray-100 rounded-lg shadow w-44">
