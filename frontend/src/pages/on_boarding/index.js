@@ -6,6 +6,7 @@ import authCircle from '../../assets/vc-auth-circle-1.svg'
 import UploadWidget from "../../components/form/file_upload";
 import Input from "../../components/form/input";
 import TextArea from "../../components/form/textarea";
+// import useOnBoarding from "../../hooks/useOnBoarding";
 
 function OnBoarding() {
   const wizards = [
@@ -13,6 +14,7 @@ function OnBoarding() {
     "Basic Information",
     "Resume"
   ]
+  // const {obForm} = useOnBoarding()
   const [selectedPill, setPill] = useState(0)
   const incrementPill = () => {
     if (selectedPill < wizards.length - 1) setPill(selectedPill + 1)
@@ -20,6 +22,16 @@ function OnBoarding() {
   const decrementPill = () => {
     if (selectedPill > 0) setPill(selectedPill - 1)
   }
+  // obForm !== null ? Array.isArray(JSON.parse(obForm)) && "image" in JSON.parse(obForm)[0] ? JSON.parse(obForm)[0].image : '' : ''
+  const [uploadedImage, setUploadedImage] = useState();
+  const [uploadedFile, setUploadedFile] = useState();
+
+  const [name, setName] = useState('')
+  const [phoneNo, setPhoneNo] = useState('')
+  const [location, setLocation] = useState('')
+  const [bio, setBio] = useState('')
+
+  const handleSubmit = () => {}
 
   return (
     <div className="flex">
@@ -69,15 +81,15 @@ function OnBoarding() {
             <>
               <h1 className="font-heading text-black text-3xl text-center md:text-5xl mt-5 mb-20">Tell us about <span className="text-primary">yourself</span></h1>
               <div className="block md:inline-flex w-full justify-center space-x-0 md:space-x-10 px-0 md:px-20">
-                <UploadWidget className={'h-auto md:w-1/3 w-full text-center md:py-0 py-5'} text="Upload Logo" />
+                <UploadWidget className={'h-auto md:w-1/3 w-full text-center md:py-0 py-5'} mime={['image/png', 'image/jpeg', 'image/jpg']} uploadedFile={uploadedImage} setUploadedFile={setUploadedImage} type='image' text="Upload Logo" />
                 <div className="md:w-2/3 w-full">
-                  <Input placeholder={'Organization name'} required={true} type={'text'} className={'w-full border border-gray-100 shadow'} />
-                  <Input placeholder={'Phone Number'} required={true} type={'number'} className={'border border-gray-100 shadow'} />
-                  <Input placeholder={'Location'} required={true} type={'text'} className={'border border-gray-100 shadow'} />
+                  <Input onChange={(e) => setName(e.target.value)} value={name} placeholder={'Organization name'} required={true} type={'text'} className={'w-full border border-gray-100 shadow'} />
+                  <Input onChange={(e) => setPhoneNo(e.target.value)} value={phoneNo} placeholder={'Phone Number'} required={true} type={'number'} className={'border border-gray-100 shadow'} />
+                  <Input onChange={(e) => setLocation(e.target.value)} value={location} placeholder={'HQ Location'} required={true} type={'text'} className={'border border-gray-100 shadow'} />
                 </div>
               </div>
               <div className="w-full px-0 md:px-20 my-0 md:my-10">
-                <TextArea placeholder={'A little about yourself'} rows={5} className={'w-full p-5 shadow resize-none'} />
+                <TextArea onChange={(e) => setBio(e.target.value)} value={bio} placeholder={'A little about yourself'} rows={5} className={'w-full p-5 shadow resize-none'} />
               </div>
             </>
           }
@@ -85,11 +97,11 @@ function OnBoarding() {
             <>
               <h1 className="font-heading text-black text-3xl text-center md:text-5xl mt-5">Upload Your <br className="mb-5"/><span className="text-primary">Resume</span></h1>
               <div className="w-full md:px-20 px-5 py-10">
-                <UploadWidget className={'w-full text-center md:py-20 py-5'} text="Choose your resume to upload" text2="PDF, JPEG, or PNG" />
+                <UploadWidget className={'w-full text-center md:py-20 py-5'} mime={['application/pdf', 'image/png', 'image/jpeg', 'image/jpg']} uploadedFile={uploadedFile} setUploadedFile={setUploadedFile} type='file' text="Choose your resume to upload" text2="PDF, JPEG, or PNG" />
               </div>
             </>
           }
-          <FormButton text={selectedPill === wizards.length - 1 ? "Submit" : selectedPill === 0 ? "Get Started" : "Next"} className={"rounded-full mt-10 w-1/2"} action={incrementPill} />
+          <FormButton text={selectedPill === wizards.length - 1 ? "Submit" : selectedPill === 0 ? "Get Started" : "Next"} className={"rounded-full mt-10 w-1/2"} action={selectedPill === wizards.length - 1 ? handleSubmit : incrementPill} />
         </div>
       </div>
     </div>

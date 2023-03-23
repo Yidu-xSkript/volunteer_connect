@@ -67,6 +67,7 @@ function MissionSideBar({ showSidebar, onClick, mission }) {
                 <div className="space-y-3">
                     <h2 className="font-heading text-2xl">About Organization</h2>
                     <p className="text-sm text-gray-600">{mission.description}</p>
+                    <p className="text-sm text-gray-600">Headquarters in {mission.location}</p>
                 </div>
                 <div className="sticky bottom-0 right-0 bg-white w-full sm:p-10 px-0 py-10">
                     <Button text={"Apply to Volunteer"} className="w-full rounded-2xl" action={setShowApplyModal} />

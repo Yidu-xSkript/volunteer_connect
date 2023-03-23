@@ -3,10 +3,11 @@ import AuthLayout from "../../Layout/Auth";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import Button from "../../components/form/button";
 import empty from "../../assets/empty.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ManageMissionModal from "../../components/modal/manageMission";
 import DeleteMissionModal from "../../components/modal/deleteMission";
 import { disableBodyScroll, enableBodyScroll } from 'body-scroll-lock';
+import axios from "axios";
 
 function Mission() {
     const missions = [
@@ -75,14 +76,21 @@ function Mission() {
     const [showModal, setShowModal] = useState(false)
     const [showDelModal, setShowDelModal] = useState(false)
     const [type, setType] = useState()
-    // const [selectedMission, setSelectedMission] = useState()
+    const [selectedMission, setSelectedMission] = useState()
 
+    const getMissions = () => {
+        // axios api goes here.
+        axios.get(process.env.API_DEV_URL+'/').then(res => (
+            console.log(res.data)
+        )).catch(err => console.log(err))
+    }
 
     const bodyScrollStatus = (disable = true) => {
         const targetElement = document.querySelector('#modal');
         disable ? disableBodyScroll(targetElement) : enableBodyScroll(targetElement);
     }
-    const openEditModal = () => {
+    const openEditModal = (id) => {
+        setSelectedMission(id)
         setType("Edit")
         setShowModal(true)
         bodyScrollStatus()
@@ -95,7 +103,6 @@ function Mission() {
     const closeModal = () => {
         if (showModal) setShowModal(false)
         if (showDelModal) setShowDelModal(false)
-        // setType("")
         bodyScrollStatus(false)
     }
     const OpenDeleteModal = () => {
@@ -103,10 +110,14 @@ function Mission() {
         bodyScrollStatus()
     }
 
+    useEffect(() => {
+        if (type === 'Edit') getMissions()
+    }, [type])
+
     return (
         <>
             {/* Add Modal + Edit Modal  - defined with type */}
-            <ManageMissionModal showModal={showModal} type={type} close={closeModal} />
+            <ManageMissionModal showModal={showModal} type={type} close={closeModal} mission={missions[selectedMission]} />
             <DeleteMissionModal showModal={showDelModal} close={closeModal} />
             <AuthLayout>
                 <div className="relative">
