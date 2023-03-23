@@ -17,7 +17,7 @@ function Login() {
   }
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const { auth_api_url } = API()
+  const { auth_api_url, base_api_url } = API()
   const { setToken, token, removeToken } = useToken()
   const { setUser, removeUser } = useUser()
   const [isLoading, setIsLoading] = useState(false)
@@ -31,7 +31,7 @@ function Login() {
       'password': password
     }
     setIsLoading(true)
-    await axios.post(`${auth_api_url}/signin`, data)
+    await axios.post(`${base_api_url + auth_api_url}/signin`, data)
       .then(res => {
         if (token) {
           removeToken()

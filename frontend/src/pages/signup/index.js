@@ -30,7 +30,7 @@ function Signup() {
   const { setUser } = useUser();
   const [error, setError] = useState();
 
-  const { auth_api_url } = API();
+  const { auth_api_url , base_api_url } = API();
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -41,7 +41,7 @@ function Signup() {
       "role": role
     }
     setIsLoading(true)
-    await axios.post(auth_api_url + '/signup', data).then((res) => {
+    await axios.post(`${base_api_url + auth_api_url}/signup`, data).then((res) => {
       setIsLoading(false)
       setToken(res.data['token'])
       setUser(JSON.stringify(res.data['user']))
