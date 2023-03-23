@@ -8,6 +8,8 @@ import GuestLayout from '../../Layout/Guest';
 import axios from "axios";
 import useToken from '../../hooks/useToken';
 import API from '../../utils/API';
+import useUser from '../../hooks/useUser';
+import { useNavigate } from 'react-router';
 
 function Signup() {
   const [passwordVisibility, setPasswordVisibility] = useState("password")
@@ -22,7 +24,12 @@ function Signup() {
   const [password, setPassword] = useState('')
 
   const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
+
   const { setToken } = useToken();
+  const { setUser } = useUser();
+  const [error, setError] = useState();
+
   const { auth_api_url } = API();
 
   const handleSubmit = async (e) => {
@@ -37,10 +44,11 @@ function Signup() {
     await axios.post(auth_api_url + '/signup', data).then((res) => {
       setIsLoading(false)
       setToken(res.data['token'])
-      console.log(res.data)
-      // save token & user info to local storage.
+      setUser(JSON.stringify(res.data['user']))
+      if (res.data['user'].image === null || res.data['user'].phone_no === null || res.data['user'].bio === null) navigate('/on-boarding')
+      else navigate('/')
     }).catch(err => {
-      console.log(err)
+      setError(err.response.data?.error)
       setIsLoading(false)
     })
   }
@@ -48,6 +56,7 @@ function Signup() {
   return (
     <GuestLayout>
       <form className='w-full flex flex-col items-center justify-center' onSubmit={handleSubmit}>
+        {error && <p className='text-sm shadow-lg border border-gray-300 bg-white py-3 px-5 rounded-lg absolute bottom-10 right-10 text-red-500'>{error}</p>}
         <Input type={"text"} placeholder={"Name"} onChange={(e) => setName(e.target.value)} value={name} required={true} uClass='w-2/3' className={'bg-[#F5F9F9]'} />
         <Input type={"email"} placeholder={"Email"} onChange={(e) => setEmail(e.target.value)} value={email} required={true} uClass='w-2/3' className={'bg-[#F5F9F9]'} />
         <Input type={passwordVisibility} onChange={(e) => setPassword(e.target.value)} value={password} placeholder={"Password"} icon={
