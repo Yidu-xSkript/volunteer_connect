@@ -1,6 +1,6 @@
 
 const Button = ({ className, text, action, isLoading, loaderClass }) => (
-    <button onClick={action} disabled={isLoading} className={`${className} ${isLoading && 'opacity-50'} bg-primary relative text-white font-semibold text-sm md:text-lg p-5 hover:shadow-xl hover:opacity-90 duration-150`}>
+    <button value={"submit"} onClick={action} disabled={isLoading} className={`${className} ${isLoading && 'opacity-50'} bg-primary relative text-white font-semibold text-sm md:text-lg p-5 hover:shadow-xl hover:opacity-90 duration-150`}>
         <p className={`${isLoading && 'opacity-20'}`}>{text}</p>
         {isLoading && <div role="status" className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
             <svg aria-hidden="true" className={`${loaderClass} w-10 h-10 mr-2 text-gray-200 animate-spin fill-white`} viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">

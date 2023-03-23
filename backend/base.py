@@ -6,8 +6,10 @@ from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
     JWTManager
 from os import environ
 import json
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 
 app.config["JWT_SECRET_KEY"] = environ.get('JWT_SECRET_KEY')
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
