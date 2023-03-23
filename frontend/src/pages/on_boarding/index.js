@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 import welcome from '../../assets/on-boarding-welcome.svg';
 import FormButton from "../../components/form/button";
@@ -6,15 +6,36 @@ import authCircle from '../../assets/vc-auth-circle-1.svg'
 import UploadWidget from "../../components/form/file_upload";
 import Input from "../../components/form/input";
 import TextArea from "../../components/form/textarea";
-// import useOnBoarding from "../../hooks/useOnBoarding";
+import useUser from "../../hooks/useUser";
+import API from "../../utils/API";
+import AxiosService from "../../services/axios.services";
+import AuthMiddleware from "../../utils/AuthMiddleware";
+import { useNavigate } from "react-router";
 
 function OnBoarding() {
-  const wizards = [
+  const { user, setUser } = useUser()
+  const { auth_api_url } = API()
+  const { isLoggedIn } = AuthMiddleware()
+
+  const _user = JSON.parse(user)
+
+  const _wizards = [
     "Welcome",
     "Basic Information",
     "Resume"
   ]
-  // const {obForm} = useOnBoarding()
+  const [wizards, setWizards] = useState(_wizards)
+
+  useEffect(() => {
+    if (isLoggedIn && _user.role === 'organization' && wizards.length === 3) {
+      const index = wizards.indexOf("Resume")
+      if (index > -1) {
+        wizards.splice(index, 1)
+        setWizards([...wizards])
+      }
+    }
+  }, [_user])
+
   const [selectedPill, setPill] = useState(0)
   const incrementPill = () => {
     if (selectedPill < wizards.length - 1) setPill(selectedPill + 1)
@@ -22,19 +43,66 @@ function OnBoarding() {
   const decrementPill = () => {
     if (selectedPill > 0) setPill(selectedPill - 1)
   }
-  // obForm !== null ? Array.isArray(JSON.parse(obForm)) && "image" in JSON.parse(obForm)[0] ? JSON.parse(obForm)[0].image : '' : ''
+
   const [uploadedImage, setUploadedImage] = useState();
   const [uploadedFile, setUploadedFile] = useState();
 
   const [name, setName] = useState('')
-  const [phoneNo, setPhoneNo] = useState('')
+  const [phoneNo, setPhoneNo] = useState()
   const [location, setLocation] = useState('')
   const [bio, setBio] = useState('')
+  const [error, setError] = useState('')
+  const { _api } = AxiosService()
+  const navigate = useNavigate()
 
-  const handleSubmit = () => {}
+  const [isLoading, setIsLoading] = useState(false);
+
+  const sendRequest = async (data) => {
+    await _api.patch(`${auth_api_url}/user/${_user?.id}/update`, data)
+      .then(res => {
+        setUser(JSON.stringify(res.data))
+        setIsLoading(false)
+        navigate('/')
+      })
+      .catch(err => {
+        console.log(err.response)
+        setIsLoading(false)
+        setError(err.response?.data)
+      })
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setIsLoading(true)
+    if (_user.role === 'volunteer') {
+      const data = {
+        'name': name,
+        'phone_no': phoneNo,
+        'bio': bio,
+        'image': uploadedImage,
+        'resume': uploadedFile,
+      }
+      if (name.length > 0 && phoneNo.length > 0 && bio.length > 0 && uploadedFile.length > 0 && uploadedImage.length > 0) {
+        await sendRequest(data)
+      } else setError('Please fill in all the required inputs.')
+    }
+    if (_user.role === 'organization') {
+      const data = {
+        'name': name,
+        'phone_no': phoneNo,
+        'location': location,
+        'bio': bio,
+        'image': uploadedImage,
+      }
+      if (name.length > 0 && phoneNo.length > 0 && location.length > 0 && bio.length > 0 && uploadedImage.length > 0) {
+        await sendRequest(data)
+      } else setError('Please fill in all the required inputs.')
+    }
+  }
 
   return (
     <div className="flex">
+      {error && <p className='text-sm shadow-lg border border-gray-300 bg-white py-3 px-5 rounded-lg absolute bottom-10 right-10 text-red-500'>{error}</p>}
       {/* Sidebar */}
       <div className="hidden lg:block w-1/4 bg-auth h-full absolute top-0 bottom-0">
         <img src={authCircle} className="lg:w-36 xl:w-40 2xl:w-64 z-0 absolute -top-20 -left-20 pointer-events-none select-none" alt="circle-bg" />
@@ -63,7 +131,7 @@ function OnBoarding() {
         </div>
         {/* Nav */}
         <div className="flex justify-between items-center">
-          <ChevronLeftIcon className="w-16 p-5 hover:bg-[#F5F9F9] rounded-full cursor-pointer" onClick={decrementPill}/>
+          <ChevronLeftIcon className="w-16 p-5 hover:bg-[#F5F9F9] rounded-full cursor-pointer" onClick={decrementPill} />
           <div className="text-xl font-semibold">
             <span className="text-gray-400">{selectedPill + 1}/</span><span className="text-primary">{wizards.length}</span>
           </div>
@@ -73,8 +141,8 @@ function OnBoarding() {
           {selectedPill === 0 &&
             <>
               <img src={welcome} className="lg:w-2/4 w-full" alt="Welcome" />
-              <h2 className="border-b-2 border-black font-semibold lg:text-2xl xl:text-3xl md:text-xl text-sm pb-4 tracking-wide">Glad You're here, name!</h2>
-              <h1 className="font-heading text-black text-3xl md:text-5xl text-center mt-5">Thank you <span className="text-primary">for donating your time.</span></h1>
+              <h2 className="border-b-2 border-black font-semibold lg:text-2xl xl:text-3xl md:text-xl text-sm pb-4 tracking-wide">Glad You're here, {_user?.name}!</h2>
+              <h1 className="font-heading text-black text-3xl md:text-5xl text-center mt-5">Thank you <span className="text-primary">{_user?.role === 'volunteer' ? 'for donating your time.' : 'for deciding to share your cause.'}</span></h1>
             </>
           }
           {selectedPill === 1 &&
@@ -83,9 +151,9 @@ function OnBoarding() {
               <div className="block md:inline-flex w-full justify-center space-x-0 md:space-x-10 px-0 md:px-20">
                 <UploadWidget className={'h-auto md:w-1/3 w-full text-center md:py-0 py-5'} mime={['image/png', 'image/jpeg', 'image/jpg']} uploadedFile={uploadedImage} setUploadedFile={setUploadedImage} type='image' text="Upload Logo" />
                 <div className="md:w-2/3 w-full">
-                  <Input onChange={(e) => setName(e.target.value)} value={name} placeholder={'Organization name'} required={true} type={'text'} className={'w-full border border-gray-100 shadow'} />
-                  <Input onChange={(e) => setPhoneNo(e.target.value)} value={phoneNo} placeholder={'Phone Number'} required={true} type={'number'} className={'border border-gray-100 shadow'} />
-                  <Input onChange={(e) => setLocation(e.target.value)} value={location} placeholder={'HQ Location'} required={true} type={'text'} className={'border border-gray-100 shadow'} />
+                  <Input onChange={(e) => setName(e.target.value)} value={name} placeholder={_user.role === 'volunteer' ? 'Fullname' : 'Organization name'} required={true} type={'text'} className={'w-full border border-gray-100 shadow'} />
+                  <Input onChange={(e) => setPhoneNo(e.target.value.replace(/\D/g, ''))} value={phoneNo} placeholder={'Phone Number'} required={true} type='text' className={'border border-gray-100 shadow'} />
+                  {_user.role === 'organization' && <Input onChange={(e) => setLocation(e.target.value)} value={location} placeholder={'HQ Location'} required={true} type={'text'} className={'border border-gray-100 shadow'} />}
                 </div>
               </div>
               <div className="w-full px-0 md:px-20 my-0 md:my-10">
@@ -95,13 +163,13 @@ function OnBoarding() {
           }
           {selectedPill === 2 &&
             <>
-              <h1 className="font-heading text-black text-3xl text-center md:text-5xl mt-5">Upload Your <br className="mb-5"/><span className="text-primary">Resume</span></h1>
+              <h1 className="font-heading text-black text-3xl text-center md:text-5xl mt-5">Upload Your <br className="mb-5" /><span className="text-primary">Resume</span></h1>
               <div className="w-full md:px-20 px-5 py-10">
                 <UploadWidget className={'w-full text-center md:py-20 py-5'} mime={['application/pdf', 'image/png', 'image/jpeg', 'image/jpg']} uploadedFile={uploadedFile} setUploadedFile={setUploadedFile} type='file' text="Choose your resume to upload" text2="PDF, JPEG, or PNG" />
               </div>
             </>
           }
-          <FormButton text={selectedPill === wizards.length - 1 ? "Submit" : selectedPill === 0 ? "Get Started" : "Next"} className={"rounded-full mt-10 w-1/2"} action={selectedPill === wizards.length - 1 ? handleSubmit : incrementPill} />
+          <FormButton isLoading={isLoading} text={selectedPill === wizards.length - 1 ? "Submit" : selectedPill === 0 ? "Get Started" : "Next"} className={"rounded-full mt-10 w-1/2"} action={selectedPill === wizards.length - 1 ? handleSubmit : incrementPill} />
         </div>
       </div>
     </div>
