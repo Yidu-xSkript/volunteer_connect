@@ -102,22 +102,42 @@ class Mission(db.Model):
     org_id = db.Column(db.Integer, db.ForeignKey('organizations.id'), nullable=False)
     name = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, nullable=False)
-    image = db.Column(db.String(255), nullable=True)
     max_people = db.Column(db.Integer, nullable=False)
-    start_date = db.Column(db.Date, nullable=False)
-    end_date = db.Column(db.Date, nullable=False)
+    estTime = db.Column(db.String(255), nullable=False)
+    volunteeringHours = db.Column(db.Integer, nullable=False)
+    location = db.Column(db.String(255), nullable=False) # Country, City
+    deadline = db.Column(db.Date, nullable=False)
+    volunteeringLocation = db.Column(db.String(255), nullable=False) # On Site / Remote
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
     def serialize(self):
         return {
-            'mission_id': self.mission_id,
+            'id': self.id,
             'org_id': self.org_id,
             'name': self.name,
             'description': self.description,
             'location': self.location,
-            'start_date': self.start_date.isoformat(),
-            'end_date': self.end_date.isoformat()
+            'applicants': self.max_people,
+            'estTime': self.estTime,
+            'volunteeringHours': self.volunteeringHours,
+            'volunteeringLocation': self.volunteeringLocation,
+            'deadline': self.deadline.isoformat(),
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat(),
+        }
+
+class Requirement(db.Model):
+    """"""
+    __tablename__ = "requirements"
+
+    id = db.Column(db.Integer, primary_key=True)
+    mission_id = db.Column(db.Integer, db.ForeignKey('missions.id'), nullable=False)
+    name = db.Column(db.String(255), nullable=False)
+
+    def serialize(self):
+        return {
+
         }
 
 class Application(db.Model):

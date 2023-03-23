@@ -52,10 +52,7 @@ class vol_CRUDS:
             vol: Volunteer = Volunteer.query.filter_by(id=vol_id).first()
             if not vol:
                 return jsonify({'error': f'Volunteer with ID {vol_id} not found.'}), 404
-            # vol.full_name = data.get('full_name', vol.full_name)
             vol.name = data.get('name', vol.name)
-            # vol.age = data.get('age', vol.age)
-            # vol.email = data.get('email', vol.email)
             vol.phone_no = data.get('phone_no', vol.phone_no)
             vol.image = data.get('image', vol.image)
             vol.resume = data.get('resume', vol.resume)

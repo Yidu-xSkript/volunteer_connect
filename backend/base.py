@@ -1,6 +1,7 @@
 from flask import Flask
 from models.volcon_db import db, User, TokenBlocklist
 from volcon.auth.AuthController import auth_bp
+from volcon.missions.Controller import missions_bp
 from datetime import timedelta, datetime, timezone
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
     JWTManager
@@ -24,6 +25,7 @@ app.app_context().push()
 
 db.init_app(app)
 app.register_blueprint(auth_bp)
+app.register_blueprint(missions_bp)
 
 # here define callback function which returns current user model
 @jwt.user_lookup_loader

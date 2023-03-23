@@ -1,20 +1,22 @@
 from flask import jsonify, request, Blueprint, session
-from mission_cruds import mission_CRUDS
-
+from volcon.missions.Model import MissionModel
 
 missions_bp = Blueprint('missions_bp', __name__, url_prefix='/api/v1/missions')
-mission_crud = mission_CRUDS()
-
+model = MissionModel()
 
 @missions_bp.route('/', methods=['GET'], strict_slashes=False)
 def get_missions():
     """Gets All Missions by Default until Search
     Filters are Applied
     """
-    mission_crud.get_all_missions()
-
+    return model.get_all_missions()
 
 @missions_bp.route('/<string:mission_id>', methods=['GET'], strict_slashes=False)
 def get_mission(mission_id):
     """Getting missions by ID"""
-    mission_crud.get_mission_by_id(mission_id)
+    return model.get_mission_by_id(mission_id)
+
+@missions_bp.route('/create/org/<int:org_id>', methods=['post'], strict_slashes=False)
+def createMission(org_id):
+    """Create Mission"""
+    return model.Create(org_id)

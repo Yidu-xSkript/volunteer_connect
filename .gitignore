@@ -9,6 +9,7 @@ backend/volcon/auth/__pycache__
 backend/volcon/missions/__pycache__
 backend/volcon/org/__pycache__
 backend/volcon/volunteer/__pycache__
+backend/volcon/requirement/__pycache__
 
 # dependencies
 frontend/node_modules
