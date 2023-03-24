@@ -8,8 +8,6 @@ from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
 from os import environ
 import json
 from flask_cors import CORS
-from flask.json import JSONEncoder
-from sqlalchemy.ext.declarative import DeclarativeMeta
 
 app = Flask(__name__)
 CORS(app, resources={r"/api/v1/*": {"origins": "*"}})

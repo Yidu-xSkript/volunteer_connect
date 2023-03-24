@@ -84,13 +84,6 @@ class Requirement(db.Model, SerializerMixin):
         'missions.id'), nullable=False)
     name = db.Column(db.String(255), nullable=False)
 
-    def serialize(self):
-        return {
-            'id': self.id,
-            'name': self.name
-        }
-
-
 class Mission(db.Model, SerializerMixin):
     """Defines the Mission Table; Which is a Child Table for the User Table
     `Missions` table has a 1:Many Relationship with the Application table"""
