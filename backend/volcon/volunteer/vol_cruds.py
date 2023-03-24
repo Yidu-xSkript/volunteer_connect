@@ -17,7 +17,7 @@ class vol_CRUDS:
         """Retrieves a Jsonified Object of all Volunteers"""
         try:
             vols = Volunteer.query.all()
-            return jsonify([vol.serialize() for vol in vols])
+            return [vol.to_dict() for vol in vols]
         except SQLAlchemyError as e:
             return jsonify({'error': str(e)}), 500
 
@@ -26,7 +26,7 @@ class vol_CRUDS:
         try:
             vol = Volunteer.query.filter_by(id=user_id).first()
             if vol:
-                return jsonify(vol.serialize())
+                return vol.to_dict()
             else:
                 return jsonify({'error': f'Volunteer with ID {user_id} not found.'}), 404
         except SQLAlchemyError as e:
@@ -58,7 +58,7 @@ class vol_CRUDS:
             vol.resume = data.get('resume', vol.resume)
             vol.biography = data.get('bio', vol.biography)
             db.session.commit()
-            return jsonify(vol.serialize()), 200
+            return vol.to_dict(), 200
         except SQLAlchemyError as e:
             db.session.rollback()
             return jsonify({'error': str(e)}), 500
