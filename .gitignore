@@ -3,6 +3,7 @@
 backend/env
 backend/__pycache__
 backend/models/__pycache__
+backend/models/serializer/__pycache__
 backend/volcon/__pycache__
 backend/volcon/applications/__pycache__
 backend/volcon/auth/__pycache__
