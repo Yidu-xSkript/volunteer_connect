@@ -7,10 +7,10 @@ class RequirementModel:
         """Create Requirement"""
         try:
             _requirements = []
-            for i in requirements:
+            for req in requirements:
                 _requirements.append(Requirement(
                     mission_id=mission_id,
-                    name=requirements[i]
+                    name=req
                 ))
 
             db.session.bulk_save_objects(_requirements)
@@ -23,7 +23,7 @@ class RequirementModel:
     def Destroy(self, mission_id):
         """Destroy all requirements based mission r/n ship"""
         try:
-            requirements = Requirement.__tablename__.delete().where(Requirement.mission_id == mission_id)
+            requirements = Requirement.__table__.delete().where(Requirement.mission_id == mission_id)
             db.session.execute(requirements)
             db.session.commit()
             return
@@ -42,8 +42,9 @@ class RequirementModel:
     def Update(self, mission_id, requirements):
         """Update Requirement"""
         try:
-            requirements = self.getAllRequirements(mission_id)
-            if requirements.count > 0:
+            _requirements = self.getAllRequirements(mission_id)
+            # print(_requirements)
+            if _requirements:
                 self.Destroy(mission_id)
             self.Create(mission_id, requirements)
             return jsonify({'message': 'Mission updated successfully'})
