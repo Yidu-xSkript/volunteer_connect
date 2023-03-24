@@ -47,7 +47,7 @@ function OnBoarding() {
   const [uploadedImage, setUploadedImage] = useState();
   const [uploadedFile, setUploadedFile] = useState();
 
-  const [name, setName] = useState('')
+  const [name, setName] = useState(_user.name)
   const [phoneNo, setPhoneNo] = useState()
   const [location, setLocation] = useState('')
   const [bio, setBio] = useState('')
