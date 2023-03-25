@@ -5,9 +5,10 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash
 from flask_jwt_extended import get_current_user
-from models.serializer import SerializerMixin
+from mixin.serializer import SerializerMixin
 
 db = SQLAlchemy()
+
 
 class User(db.Model, SerializerMixin):
     """Defines the User Table on the Database"""
@@ -41,12 +42,12 @@ class Volunteer(User):
     """Defines the Volunteers table; which is a Child Table of the User Table"""
     __tablename__ = 'volunteers'
 
-    serialize_rules = ('-missions','-password',)
+    serialize_rules = ('-missions', '-password',)
 
     id = db.Column(db.Integer, db.ForeignKey(User.id), primary_key=True)
     resume = db.Column(db.String(255), nullable=True)
     age = db.Column(db.Integer, nullable=True)
-    # applications = db.relationship('Application')
+    applications = db.relationship('Application')
 
     __mapper_args__ = {
         'polymorphic_identity': 'volunteer'
@@ -61,7 +62,7 @@ class Organization(User):
 
     __tablename__ = 'organizations'
 
-    serialize_rules = ('-missions.organization','-password',)
+    serialize_rules = ('-missions.organization', '-password',)
 
     id = db.Column(db.Integer, db.ForeignKey(User.id), primary_key=True)
     location = db.Column(db.String(255), nullable=True)
@@ -83,6 +84,7 @@ class Requirement(db.Model, SerializerMixin):
     mission_id = db.Column(db.Integer, db.ForeignKey(
         'missions.id'), nullable=False)
     name = db.Column(db.String(255), nullable=False)
+
 
 class Mission(db.Model, SerializerMixin):
     """Defines the Mission Table; Which is a Child Table for the User Table
@@ -110,6 +112,20 @@ class Mission(db.Model, SerializerMixin):
                            onupdate=datetime.utcnow, nullable=False)
     requirements = db.relationship('Requirement', backref='mission')
 
+    def filter(self, query, orgs:list, applicants, location, volunteerLocation):
+        missions: list[self] = self.query.order_by('updated_at')
+        if query:
+            missions = missions.filter(Mission.name.like('%'+query+'%'))
+        if applicants > 0:
+            missions = missions.filter_by(max_people = applicants)
+        if len(orgs) > 0:
+            missions = missions.filter(self.org_id.in_(orgs))
+        if location:
+            missions = missions.filter_by(location = location)
+        if volunteerLocation:
+            missions = missions.filter_by(volunteeringLocation = volunteerLocation)
+        return missions.all()
+
 
 class Application(db.Model, SerializerMixin):
     """Defines the Application Table;
@@ -117,6 +133,9 @@ class Application(db.Model, SerializerMixin):
     """
 
     __tablename__ = 'applications'
+
+    serialize_rules = ('-mission.requirements',
+                       '-mission.organization.missions',)
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey(
