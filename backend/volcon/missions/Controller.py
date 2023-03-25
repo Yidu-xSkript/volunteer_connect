@@ -40,7 +40,7 @@ def updateMission(mission_id):
 @jwt_required()
 def get_applied_missions_status():
     """Returns The Status of all Missions associated with a Particular User_id"""
-    user_id = get_jwt_identity()
+    user_id = get_jwt_identity().get('id')
 
     applications = Application.query.filter_by(user_id=user_id).all()
     mission_data = []
@@ -52,3 +52,30 @@ def get_applied_missions_status():
         })
 
     return jsonify(mission_data)
+
+
+@missions_bp.route('/<int: mission_id>/apply', methods=['POST'], strict_slashes=False)
+@jwt_required()
+def apply_to_mission(mission_id):
+    """Creating New Application Entry Based on Mission_id and user_id"""
+    user_id = get_jwt_identity.get('id')
+
+    mission = Mission.query.get(mission_id)
+    if not mission:
+        return jsonify({'error': 'Mission not found'}), 404
+
+    application = Application.query.filter_by(
+        user_id = user_id, mission_id=mission_id).first()
+    if application:
+        return jsonify({'error': 'Application already exists'}), 400
+
+    new_application = Application(
+        user_id=user_id, 
+        mission_id=mission_id
+        )
+
+    db.session.add(new_application)
+    db.session.commit()
+
+    return jsonify({'message': 'Application submitted successfully!'}), 201
+
