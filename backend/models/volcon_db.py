@@ -5,9 +5,11 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash
 from flask_jwt_extended import get_current_user
+from models.serializer import SerializerMixin
 
 db = SQLAlchemy()
-class User(db.Model):
+
+class User(db.Model, SerializerMixin):
     """Defines the User Table on the Database"""
 
     __tablename__ = 'users'
@@ -20,8 +22,10 @@ class User(db.Model):
     role = db.Column(db.String(20), nullable=False)
     password = db.Column(db.String(128), nullable=False)
     biography = db.Column(db.Text, nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    created_at = db.Column(
+        db.DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow,
+                           onupdate=datetime.utcnow, nullable=False)
 
     __mapper_args__ = {
         'polymorphic_identity': 'user',
@@ -32,95 +36,82 @@ class User(db.Model):
         self.image = imgPath
         db.session.commit()
 
+
 class Volunteer(User):
     """Defines the Volunteers table; which is a Child Table of the User Table"""
-
     __tablename__ = 'volunteers'
+
+    serialize_rules = ('-missions','-password',)
 
     id = db.Column(db.Integer, db.ForeignKey(User.id), primary_key=True)
     resume = db.Column(db.String(255), nullable=True)
     age = db.Column(db.Integer, nullable=True)
+    # applications = db.relationship('Application')
 
     __mapper_args__ = {
         'polymorphic_identity': 'volunteer'
     }
 
-    def serialize(self):
-        return {
-            'id':self.id,
-            'age': self.age,
-            'name': self.name,
-            'image': self.image,
-            'email': self.email,
-            'phone_no': self.phone_no,
-            'role': self.role,
-            'bio': self.biography,
-            'resume': self.resume,
-            'created_at': self.created_at.isoformat(),
-            'updated_at': self.updated_at.isoformat()
-        }
-
     def verify_password(self, pwd):
         return check_password_hash(self.password, pwd)
+
 
 class Organization(User):
     """Defines the Organization Table; which is a Child Table of the User Table"""
 
     __tablename__ = 'organizations'
 
+    serialize_rules = ('-missions.organization','-password',)
+
     id = db.Column(db.Integer, db.ForeignKey(User.id), primary_key=True)
     location = db.Column(db.String(255), nullable=True)
+    missions = db.relationship('Mission')
 
     __mapper_args__ = {
         'polymorphic_identity': 'organization'
     }
 
-    def serialize(self):
-        return {
-            'id':self.id,
-            'name': self.name,
-            'location': self.location,
-            'bio': self.biography,
-            'image': self.image,
-            'email': self.email,
-            'phone_no': self.phone_no,
-            'role': self.role,
-            'created_at': self.created_at.isoformat(),
-            'updated_at': self.updated_at.isoformat()
-        }
-
     def verify_password(self, pwd):
         return check_password_hash(self.password, pwd)
 
-class Mission(db.Model):
+
+class Requirement(db.Model, SerializerMixin):
+    """"""
+    __tablename__ = "requirements"
+
+    id = db.Column(db.Integer, primary_key=True)
+    mission_id = db.Column(db.Integer, db.ForeignKey(
+        'missions.id'), nullable=False)
+    name = db.Column(db.String(255), nullable=False)
+
+class Mission(db.Model, SerializerMixin):
     """Defines the Mission Table; Which is a Child Table for the User Table
     `Missions` table has a 1:Many Relationship with the Application table"""
 
     __tablename__ = 'missions'
 
+    serialize_rules = ('-requirements.mission',)
+
     id = db.Column(db.Integer, primary_key=True)
-    org_id = db.Column(db.Integer, db.ForeignKey('organizations.id'), nullable=False)
+    org_id = db.Column(db.Integer, db.ForeignKey(
+        'organizations.id'), nullable=False)
     name = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, nullable=False)
-    image = db.Column(db.String(255), nullable=True)
     max_people = db.Column(db.Integer, nullable=False)
-    start_date = db.Column(db.Date, nullable=False)
-    end_date = db.Column(db.Date, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    estTime = db.Column(db.String(255), nullable=False)
+    volunteeringHours = db.Column(db.Integer, nullable=False)
+    location = db.Column(db.String(255), nullable=False)  # Country, City
+    deadline = db.Column(db.Date, nullable=False)
+    volunteeringLocation = db.Column(
+        db.String(255), nullable=False)  # On Site / Remote
+    created_at = db.Column(
+        db.DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow,
+                           onupdate=datetime.utcnow, nullable=False)
+    requirements = db.relationship('Requirement', backref='mission')
 
-    def serialize(self):
-        return {
-            'mission_id': self.mission_id,
-            'org_id': self.org_id,
-            'name': self.name,
-            'description': self.description,
-            'location': self.location,
-            'start_date': self.start_date.isoformat(),
-            'end_date': self.end_date.isoformat()
-        }
 
-class Application(db.Model):
+class Application(db.Model, SerializerMixin):
     """Defines the Application Table;
     which has a 1:1 relationship with the `Missions` Table;
     """
@@ -128,36 +119,25 @@ class Application(db.Model):
     __tablename__ = 'applications'
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('volunteers.id'), nullable=False)
-    mission_id = db.Column(db.Integer, db.ForeignKey('missions.id'), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey(
+        'volunteers.id'), nullable=False)
+    mission_id = db.Column(db.Integer, db.ForeignKey(
+        'missions.id'), nullable=False)
+    created_at = db.Column(
+        db.DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow,
+                           onupdate=datetime.utcnow, nullable=False)
     status = db.Column(db.Boolean, nullable=True)
-
-    mission = db.relationship('Mission', backref='applications')
-    volunteer = db.relationship('Volunteer', backref='applications')
-
-    def serialize(self):
-        return {
-            'id': self.id,
-            'org_id': self.org_id,
-            'name': self.name,
-            'description': self.description,
-            'location': self.location,
-            'start_date': self.start_date.isoformat(),
-            'end_date': self.end_date.isoformat()
-        }
+    mission = db.relationship('Mission')
 
 
-# This could be expanded to fit the needs of your application. For example,
+# This could be expanded to fit the needs of the application. For example,
 # it could track who revoked a JWT, when a token expires, notes for why a
-# JWT was revoked, an endpoint to un-revoked a JWT, etc.
+# JWT was revoked, an endpoint to un-revoke a JWT, etc.
 # Making jti an index can significantly speed up the search when there are
 # tens of thousands of records. Remember this query will happen for every
-# (protected) request,
-# If your database supports a UUID type, this can be used for the jti column
-# as well
-class TokenBlocklist(db.Model):
+# (protected) request
+class TokenBlocklist(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     jti = db.Column(db.String(36), nullable=False, index=True)
     type = db.Column(db.String(16), nullable=False)
@@ -166,4 +146,5 @@ class TokenBlocklist(db.Model):
         default=lambda: get_current_user().id,
         nullable=False,
     )
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    created_at = db.Column(
+        db.DateTime, default=datetime.utcnow, nullable=False)

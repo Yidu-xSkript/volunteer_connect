@@ -22,7 +22,7 @@ class org_CRUDS:
         try:
             org = Organization.query.filter_by(org_id=org_id).first()
             if org:
-                return jsonify(org.serialize())
+                return org.to_dict()
             else:
                 return jsonify({'error': f'Organization with ID {org_id} not found.'}), 404
         except SQLAlchemyError as e:
@@ -56,7 +56,7 @@ class org_CRUDS:
                 org.biography = data.get('bio', org.biography)
                 org.image = data.get('image', org.image)
                 db.session.commit()
-                return jsonify(org.serialize())
+                return org.to_dict()
             else:
                 return jsonify({'error': f'Organization with ID {org_id} not found.'}), 404
         except SQLAlchemyError as e:

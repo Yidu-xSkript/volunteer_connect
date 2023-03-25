@@ -30,7 +30,7 @@ def signup():
         db.session.add(user)
         db.session.commit()
 
-        return jsonify({'user': user.serialize(), 'token': access_token}), 201
+        return jsonify({'user': user.to_dict(), 'token': access_token}), 201
     except SQLAlchemyError as e:
         error = str(e.__dict__.get('orig', e))
         return jsonify({'error': error}), 500
@@ -47,10 +47,10 @@ def login():
     organization = Organization.query.filter_by(email=email).one_or_none()
 
     if volunteer and volunteer.verify_password(password):
-        return jsonify({'user': volunteer.serialize(), 'token':  create_access_token(identity=email)}), 200
+        return jsonify({'user': volunteer.to_dict(), 'token':  create_access_token(identity=email)}), 200
 
     elif organization and organization.verify_password(password):
-        return jsonify({'user': organization.serialize(), 'token':  create_access_token(identity=email)}), 200
+        return jsonify({'user': organization.to_dict(), 'token':  create_access_token(identity=email)}), 200
 
     else:
         return jsonify({'error': 'Invalid email or Password'}), 401
