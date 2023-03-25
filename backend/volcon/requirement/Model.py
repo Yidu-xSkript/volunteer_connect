@@ -31,21 +31,10 @@ class RequirementModel:
             error = str(e.__dict__.get('orig', e))
             return error, 500
 
-    def getAllRequirements(self, mission_id):
-        try:
-            requirements = Requirement.query.filter_by(id=mission_id).all()
-            return requirements
-        except SQLAlchemyError as e:
-            error = str(e.__dict__.get('orig', e))
-            return error, 500
-
     def Update(self, mission_id, requirements):
         """Update Requirement"""
         try:
-            _requirements = self.getAllRequirements(mission_id)
-            # print(_requirements)
-            if _requirements:
-                self.Destroy(mission_id)
+            self.Destroy(mission_id)
             self.Create(mission_id, requirements)
             return jsonify({'message': 'Mission updated successfully'})
         except SQLAlchemyError as e:

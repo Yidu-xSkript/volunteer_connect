@@ -1,15 +1,14 @@
 from flask import Blueprint
 from volcon.missions.Model import MissionModel
-from volcon.auth.authorization import check_access
-from flask_jwt_extended import jwt_required, get_jwt_identity
-from models import db, Application, Mission
+from mixin.authorization import check_access
+from flask_jwt_extended import get_current_user, jwt_required
 
-
-missions_bp = Blueprint('missions_bp', __name__, url_prefix='/api/v1/missions')
+MissionController = Blueprint('MissionController', __name__, url_prefix='/api/v1/missions')
 model = MissionModel()
 
 
-@missions_bp.route('/', methods=['GET'], strict_slashes=False)
+@MissionController.route('/', methods=['GET'], strict_slashes=False)
+@jwt_required()
 def get_missions():
     """Gets All Missions by Default until Search
     Filters are Applied
@@ -17,26 +16,28 @@ def get_missions():
     return model.get_all_missions()
 
 
-@missions_bp.route('/<string:mission_id>', methods=['GET'], strict_slashes=False)
+@MissionController.route('/<string:mission_id>', methods=['GET'], strict_slashes=False)
 def get_mission(mission_id):
     """Getting missions by ID"""
     return model.get_mission_by_id(mission_id)
 
 
-@missions_bp.route('/create/org/<int:user_id>', methods=['POST'], strict_slashes=False)
+@MissionController.route('/create/org', methods=['POST'], strict_slashes=False)
 @check_access(['organization'])
-def createMission(user_id):
+def createMission():
     """Create Mission"""
+    user_id = get_current_user().id
     return model.Create(user_id)
 
 
-@missions_bp.route('/<int:mission_id>/update', methods=['PATCH'], strict_slashes=False)
+@MissionController.route('/<int:id>/update', methods=['PATCH'], strict_slashes=False)
 @check_access(['organization'])
-def updateMission(mission_id):
+def updateMission(id):
     """Update Mission"""
-    return model.Update(mission_id)
+    return model.Update(id)
 
-@missions_bp.route('/applied', methods=['GET'], strict_slashes=False)
+
+@MissionController.route('/applied', methods=['GET'], strict_slashes=False)
 @jwt_required()
 def get_applied_missions_status():
     """Returns The Status of all Missions associated with a Particular User_id"""
@@ -54,7 +55,7 @@ def get_applied_missions_status():
     return jsonify(mission_data)
 
 
-@missions_bp.route('/<int: mission_id>/apply', methods=['POST'], strict_slashes=False)
+@MissionController.route('/<int: mission_id>/apply', methods=['POST'], strict_slashes=False)
 @jwt_required()
 def apply_to_mission(mission_id):
     """Creating New Application Entry Based on Mission_id and user_id"""
@@ -79,3 +80,9 @@ def apply_to_mission(mission_id):
 
     return jsonify({'message': 'Application submitted successfully!'}), 201
 
+
+@MissionController.route('/<int:id>/destroy', methods=['DELETE'], strict_slashes=False)
+@check_access(['organization'])
+def destroyMission(id):
+    """Destroy Mission"""
+    return model.Destroy(id)
