@@ -1,6 +1,6 @@
 from flask import jsonify, request
 from sqlalchemy.exc import SQLAlchemyError
-from volcon_db import db, Volunteer
+from models.volcon_db import db, Volunteer
 import uuid
 
 
@@ -17,18 +17,18 @@ class vol_CRUDS:
         """Retrieves a Jsonified Object of all Volunteers"""
         try:
             vols = Volunteer.query.all()
-            return jsonify([vol.to_dict() for vol in vols])
+            return [vol.to_dict() for vol in vols]
         except SQLAlchemyError as e:
             return jsonify({'error': str(e)}), 500
 
-    def get_vol(self, vol_id):
+    def get_vol(self, user_id):
         """Retrieving a Single Volunteer by ID"""
         try:
-            vol = Volunteer.query.filter_by(volunteer_id=vol_id).first()
+            vol = Volunteer.query.filter_by(id=user_id).first()
             if vol:
-                return jsonify(vol.to_dict())
+                return vol.to_dict()
             else:
-                return jsonify({'error': f'Volunteer with ID {vol_id} not found.'}), 404
+                return jsonify({'error': f'Volunteer with ID {user_id} not found.'}), 404
         except SQLAlchemyError as e:
             return jsonify({'error': str(e)}), 500
 
@@ -49,16 +49,16 @@ class vol_CRUDS:
         """Updating Details of an Existing Volunteer"""
         try:
             data = request.get_json()
-            vol = Volunteer.query.filter_by(volunteer_id=vol_id).first()
+            vol: Volunteer = Volunteer.query.filter_by(id=vol_id).first()
             if not vol:
                 return jsonify({'error': f'Volunteer with ID {vol_id} not found.'}), 404
-            vol.full_name = data.get('full_name', vol.full_name)
-            vol.age = data.get('age', vol.age)
-            vol.email = data.get('email', vol.email)
+            vol.name = data.get('name', vol.name)
             vol.phone_no = data.get('phone_no', vol.phone_no)
-            vol.profile_pic = data.get('profile_pic', vol.profile_pic)
+            vol.image = data.get('image', vol.image)
+            vol.resume = data.get('resume', vol.resume)
+            vol.biography = data.get('bio', vol.biography)
             db.session.commit()
-            return jsonify(vol.to_dict()), 200
+            return vol.to_dict(), 200
         except SQLAlchemyError as e:
             db.session.rollback()
             return jsonify({'error': str(e)}), 500

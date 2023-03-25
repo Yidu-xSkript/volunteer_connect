@@ -3,7 +3,7 @@
 
 from flask import jsonify, request
 from sqlalchemy.exc import SQLAlchemyError
-from volcon_db import db, Organization
+from models.volcon_db import db, Organization
 
 class org_CRUDS:
     def __init__(self):
@@ -13,7 +13,7 @@ class org_CRUDS:
         """Retrieves a Jsonified Object of all Organizations"""
         try:
             orgs = Organization.query.all()
-            return jsonify([org.to_dict() for org in orgs])
+            return jsonify([org.serialize() for org in orgs])
         except SQLAlchemyError as e:
             return jsonify({'error': str(e)}), 500
 
@@ -22,7 +22,7 @@ class org_CRUDS:
         try:
             org = Organization.query.filter_by(org_id=org_id).first()
             if org:
-                return jsonify(org.to_dict())
+                return org.to_dict()
             else:
                 return jsonify({'error': f'Organization with ID {org_id} not found.'}), 404
         except SQLAlchemyError as e:
@@ -48,14 +48,15 @@ class org_CRUDS:
         """Updating Details of an Existing Organization"""
         try:
             data = request.get_json()
-            org = Organization.query.filter_by(org_id=org_id).first()
+            org: Organization = Organization.query.filter_by(id=org_id).first()
             if org:
-                org.org_name = data.get('org_name', org.org_name)
+                org.name = data.get('name', org.name)
                 org.location = data.get('location', org.location)
-                org.biography = data.get('biography', org.biography)
-                org.profile_logo = data.get('profile_logo', org.profile_logo)
+                org.phone_no = data.get('phone_no', org.phone_no)
+                org.biography = data.get('bio', org.biography)
+                org.image = data.get('image', org.image)
                 db.session.commit()
-                return jsonify(org.to_dict())
+                return org.to_dict()
             else:
                 return jsonify({'error': f'Organization with ID {org_id} not found.'}), 404
         except SQLAlchemyError as e:

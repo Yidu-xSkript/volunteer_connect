@@ -1,42 +1,53 @@
 from flask import jsonify, request
 from sqlalchemy.exc import SQLAlchemyError
-from volcon_db import db, Mission
+from models.volcon_db import db, Mission
+from volcon.requirement.Model import RequirementModel
 
-class mission_CRUDS:
+requirementModel = RequirementModel()
+
+class MissionModel:
     @staticmethod
-    def create_mission(org_id):
+    def Create(org_id):
         try:
             data = request.get_json()
-            mission = Mission(
+            mission: Mission = Mission(
                 org_id=org_id,
                 name=data['name'],
                 description=data['description'],
                 location=data['location'],
-                start_date=data['start_date'],
-                end_date=data['end_date']
+                max_people=data['applicants'],
+                estTime=data['estTime'],
+                volunteeringHours=data['volunteeringHours'],
+                volunteeringLocation=data['volunteeringLocation'],
+                deadline=data['deadline'],
             )
             db.session.add(mission)
             db.session.commit()
-            return jsonify({'message': 'Mission created successfully'})
+            requirementModel.Create(
+                mission_id=mission.id, requirements=data['requirements'])
+            return mission.to_dict()
         except SQLAlchemyError as e:
             error = str(e.__dict__.get('orig', e))
             return jsonify({'error': error}), 500
 
+    # get missions with relationship
     @staticmethod
     def get_all_missions():
         try:
-            missions = Mission.query.all()
-            return jsonify([mission.serialize() for mission in missions])
+            missions: Mission = Mission.query.join(RequirementModel).all()
+            return [mission.to_dict() for mission in missions]
         except SQLAlchemyError as e:
             error = str(e.__dict__.get('orig', e))
             return jsonify({'error': error}), 500
 
+    # get missions with relationship
     @staticmethod
     def get_mission_by_id(mission_id):
         try:
-            mission = Mission.query.filter_by(id=mission_id).first()
+            mission = Mission.query.filter_by(
+                id=mission_id).join(RequirementModel).first()
             if mission:
-                return jsonify(mission.serialize())
+                return mission.to_dict()
             else:
                 return jsonify({'message': 'Mission not found'})
         except SQLAlchemyError as e:
@@ -44,18 +55,26 @@ class mission_CRUDS:
             return jsonify({'error': error}), 500
 
     @staticmethod
-    def update_mission(mission_id):
+    def Update(mission_id):
         try:
             data = request.get_json()
-            mission = Mission.query.filter_by(id=mission_id).first()
+            mission: Mission = Mission.query.filter_by(id=mission_id).first()
             if mission:
                 mission.name = data.get('name', mission.name)
-                mission.description = data.get('description', mission.description)
+                mission.description = data.get(
+                    'description', mission.description)
                 mission.location = data.get('location', mission.location)
-                mission.start_date = data.get('start_date', mission.start_date)
-                mission.end_date = data.get('end_date', mission.end_date)
+                mission.deadline = data.get('deadline', mission.deadline)
+                mission.max_people = data.get('applicants', mission.max_people)
+                mission.estTime = data.get('estTime', mission.estTime)
+                mission.volunteeringHours = data.get(
+                    'volunteeringHours', mission.volunteeringHours)
+                mission.volunteeringLocation = data.get(
+                    'volunteeringLocation', mission.volunteeringLocation)
                 db.session.commit()
-                return jsonify({'message': 'Mission updated successfully'})
+                requirementModel.Update(
+                    mission_id=mission_id, requirements=data['requirements'])
+                return mission.to_dict()
             else:
                 return jsonify({'message': 'Mission not found'})
         except SQLAlchemyError as e:
@@ -63,10 +82,11 @@ class mission_CRUDS:
             return jsonify({'error': error}), 500
 
     @staticmethod
-    def delete_mission(mission_id):
+    def Destroy(mission_id):
         try:
             mission = Mission.query.filter_by(id=mission_id).first()
             if mission:
+                requirementModel.Destroy(mission_id=mission_id)
                 db.session.delete(mission)
                 db.session.commit()
                 return jsonify({'message': 'Mission deleted successfully'})
