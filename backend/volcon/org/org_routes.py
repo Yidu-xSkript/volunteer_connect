@@ -67,3 +67,17 @@ def new_mission():
 
     new_mission = mission_CRUDS.create_mission(current_user_id)
     return jsonify(serialize(new_mission))
+
+
+@org_bp.route('/applications', methods=['GET'], strict_slashes=False)
+@jwt_required()
+def get_applications_for_org():
+    """Queries the DB to return application entries for every Mission Entry
+    associated with the same Org_ID"""
+
+    current_user_id = get_jwt_identity()
+    organization = Organization.query.filter_by(id=current_user_id).one()
+    mission_ids = [mission.id for mission in organization.missions]
+    applications = Application.query.filter(
+        Application.mission_id.in_(mission_ids)).all()
+    return jsonify([application.serialize() for application in applications])
