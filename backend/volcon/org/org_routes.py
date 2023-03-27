@@ -81,3 +81,17 @@ def get_applications_for_org():
     applications = Application.query.filter(
         Application.mission_id.in_(mission_ids)).all()
     return jsonify([application.serialize() for application in applications])
+
+@org_bp.route('/applications/<int:app_id>', methods=['GET'], strict_slashes=False)
+@jwt_required()
+def get_application(app_id):
+    """Queries the DB to return application entry based on application_id"""
+    try:
+        application = Application.query.filter_by(id=app_id).first()
+        if application:
+            return application.to_dict()
+        else:
+            return jsonify({"message": "Application not found"}), 404
+    except NoResultFound:
+        return jsonify({"message": "Application not found"}), 404
+
