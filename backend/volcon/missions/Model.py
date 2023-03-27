@@ -4,6 +4,7 @@ from models.volcon_db import db, Mission
 from volcon.requirement.Model import RequirementModel
 
 requirementModel = RequirementModel()
+mission = Mission()
 
 class MissionModel:
     @staticmethod
@@ -34,7 +35,17 @@ class MissionModel:
     @staticmethod
     def get_all_missions():
         try:
-            missions: Mission = Mission.query.join(RequirementModel).all()
+            # Implement Filter
+            data = request.get_json()
+            organizations = data['organizations']
+            location = data['location']
+            volunteerLocation = data['volunteerLocation']
+            applicants = data['applicants']
+
+            query = request.args.get("query")
+            missions: list[Mission] = mission.filter(
+                    query, organizations, applicants, location, volunteerLocation)
+
             return [mission.to_dict() for mission in missions]
         except SQLAlchemyError as e:
             error = str(e.__dict__.get('orig', e))
@@ -44,8 +55,7 @@ class MissionModel:
     @staticmethod
     def get_mission_by_id(mission_id):
         try:
-            mission = Mission.query.filter_by(
-                id=mission_id).join(RequirementModel).first()
+            mission = Mission.query.filter_by(id=mission_id).first()
             if mission:
                 return mission.to_dict()
             else:
@@ -84,7 +94,7 @@ class MissionModel:
     @staticmethod
     def Destroy(mission_id):
         try:
-            mission = Mission.query.filter_by(id=mission_id).first()
+            mission = Mission.query.filter_by(id=mission_id).one_or_none()
             if mission:
                 requirementModel.Destroy(mission_id=mission_id)
                 db.session.delete(mission)
