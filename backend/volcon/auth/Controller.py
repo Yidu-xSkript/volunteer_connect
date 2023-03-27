@@ -99,3 +99,32 @@ def updateUserImage(userId):
     user: User = User.query.filter_by(id=userId).one_or_none()
     user.updateImage(request.get_json().get('image', user.image))
     return jsonify({'image': user.image})
+
+
+@AuthController.route('/user/password', methods=['PATCH'])
+@jwt_required()
+def update_user_password():
+    """Updating password of an authenticated user"""
+    
+    current_user = get_current_user()
+    user_id = current_user.id
+    data = request.get_json()
+    old_password = data.get('old_password')
+    new_password = data.get('new_password')
+
+    if not old_password or not new_password:
+        return jsonify({'message': 'Missing password data.'}), 400
+
+    user = User.query.filter_by(id=user_id).first()
+
+    if not user.verify_password(old_password):
+        return jsonify({'message': 'Old password is incorrect.'}), 401
+
+    try:
+        user.password = generate_password_hash(new_password)
+        db.session.commit()
+        return jsonify({'message': 'Password updated successfully.'}), 200
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({'message': 'Unable to update password.'}), 500
+
