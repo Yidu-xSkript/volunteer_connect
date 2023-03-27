@@ -82,6 +82,7 @@ def get_applications_for_org():
         Application.mission_id.in_(mission_ids)).all()
     return jsonify([application.serialize() for application in applications])
 
+
 @org_bp.route('/applications/<int:app_id>', methods=['GET'], strict_slashes=False)
 @jwt_required()
 def get_application(app_id):
@@ -94,4 +95,31 @@ def get_application(app_id):
             return jsonify({"message": "Application not found"}), 404
     except NoResultFound:
         return jsonify({"message": "Application not found"}), 404
+
+
+@org_bp.route('/applications/<int:app_id>/status', methods=['POST'])
+@jwt_required()
+def update_application_status(app_id):
+    """A method that facilitates changing status of Applications for Organizations"""
+
+    current_user_id = get_jwt_identity()
+
+
+    try:
+        application = Application.query.filter_by(id=app_id, user_id=current_user_id).one()
+    except NoResultFound:
+        return jsonify({'message': 'Application not found or not authorized.'}), 404
+
+    # Get the new status from the request data
+    new_status = request.json.get('status')
+
+    if new_status == 'approved':
+        application.status = 'approved'
+    elif new_status == 'denied':
+        application.status = 'denied'
+    else:
+        return jsonify({'message': 'Invalid status value.'}), 400
+
+    db.session.commit()
+    return jsonify({'application': application.serialize()}), 200
 
