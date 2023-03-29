@@ -5,7 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import generate_password_hash
 from volcon.volunteer.vol_cruds import vol_CRUDS
 from volcon.org.org_cruds import org_CRUDS
-# from volcon.auth.authorization import check_access
+from mixin.authorization import check_access
 
 AuthController = Blueprint('auth', __name__, url_prefix='/api/v1/auth')
 
@@ -99,3 +99,11 @@ def updateUserImage(userId):
     user: User = User.query.filter_by(id=userId).one_or_none()
     user.updateImage(request.get_json().get('image', user.image))
     return jsonify({'image': user.image})
+
+@AuthController.route('/user/resume/destroy', methods=['PATCH'], strict_slashes=False)
+@check_access(['volunteer'])
+def destroyResume():
+    user: User = get_current_user()
+    volunteer: Volunteer = Volunteer()
+    volunteer.destroyResume(user.id)
+    return jsonify({'user': volunteer.to_dict()}), 200
