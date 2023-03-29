@@ -84,12 +84,12 @@ function MissionSideBar({ showSidebar, onClick, mission }) {
                         ))}
                     </div>
                 </div>
-                <div className={`space-y-3 ${JSON.parse(user).role === 'organization' && 'pb-10'}`}>
+                <div className={`space-y-3 ${user && JSON.parse(user).role === 'organization' && 'pb-10'}`}>
                     <h2 className="font-heading text-2xl">About Organization</h2>
                     <p className="text-sm text-gray-600">{mission?.organization.biography}</p>
                     <p className="text-sm text-gray-600">Headquarters in <strong>{mission?.organization.location}</strong></p>
                 </div>
-                {JSON.parse(user).role === 'volunteer' && <div className="sticky bottom-0 right-0 bg-white w-full sm:p-10 px-0 py-10">
+                {user && JSON.parse(user).role === 'volunteer' && <div className="sticky bottom-0 right-0 bg-white w-full sm:p-10 px-0 py-10">
                     <Button disabled={missionId.indexOf(mission.id) !== -1} text={missionId.indexOf(mission.id) === -1 ? "Apply to Volunteer" : "You have already Applied!"} className="w-full rounded-2xl" action={setShowApplyModal} />
                 </div>}
             </div>
