@@ -10,27 +10,42 @@ import LocationDropdown from "../location";
 import Tag from "../form/tag";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { City, Country } from "country-state-city";
+import AxiosService from "../../services/axios.services";
 
-function ManageMissionModal({ showModal, type, close, mission }) {
-    const [deadline, setDeadline] = useState(new Date());
-    const [title, setTitle] = useState(mission !== undefined && mission.title ? mission.title : '')
-    const [estTime, setEstTime] = useState(mission !== undefined && mission.estTime? mission.estTime : '')
-    const [applicants, setApplicants] = useState(mission !== undefined && mission.applicants ? mission.estTime : 1)
-    const [volunteeringHours, setVolunteeringHours] = useState(mission !== undefined && mission.volunteeringHours ? mission.volunteeringHours : 1)
-    const [description, setDescription] = useState(mission !== undefined && mission.description ? mission.description : '')
+function ManageMissionModal({ showModal, type, close, mission, setMissions, setMissions_ }) {
+    const [deadline, setDeadline] = useState(mission !== undefined ? new Date(mission.created_at) : new Date());
+    const [title, setTitle] = useState(mission !== undefined ? mission.name : '')
+    const [estTime, setEstTime] = useState(mission !== undefined ? mission.estTime : '')
+    const [applicants, setApplicants] = useState(mission !== undefined ? mission.max_people : 1)
+    const [volunteeringHours, setVolunteeringHours] = useState(mission !== undefined ? mission.volunteeringHours : 1)
+    const [description, setDescription] = useState(mission !== undefined ? mission.description : '')
     const [requirement, setRequirement] = useState('')
-    var [requirements, setRequirements] = useState(mission !== undefined ? [...mission?.requirements?.name] : [])
+    var [requirements, setRequirements] = useState(mission !== undefined && mission ? [...mission?.requirements.map((_) => _?.name)] : [])
 
     const volunteerLocationOption = [{ id: 'On Site', name: 'On Site' }, { id: 'Remote', name: 'Remote' }]
-    const [volunteerLocation, setVolunteerLocation] = useState(volunteerLocationOption[0])
-
+    var vlArr = []
+    volunteerLocationOption.map((loc, i) => {
+        if (mission && mission.volunteeringLocation === loc.name)
+            vlArr.push(volunteerLocationOption[i].id)
+        return null
+    })
+    const [volunteerLocation, setVolunteerLocation] = useState(mission !== undefined ? vlArr[0] : volunteerLocationOption[0])
     const _countries = Country.getAllCountries()
-    const [selectedCountry, setSelectedCountry] = useState({code: _countries[0].isoCode, name: _countries[0].name})
+    var countryArr = []
+    _countries.forEach((country) => {
+        if (mission && mission?.location.split(/\s*, \s*/)[0] === country.name)
+            countryArr.push(country.isoCode)
+        return null
+    })
+    const [selectedCountry, setSelectedCountry] = useState({
+        code: mission !== undefined ? countryArr[0] : _countries[0].isoCode,
+        name: mission !== undefined ? mission?.location.split(/\s*, \s*/)[0] : _countries[0].name
+    })
     var _cities = City.getCitiesOfCountry(selectedCountry.code)
-    const [selectedCity, setSelectedCity] = useState(_cities[0]?.name)
+    const [selectedCity, setSelectedCity] = useState(mission !== undefined ? mission?.location.split(/\s*, \s*/)[1] : _cities[0]?.name)
 
     const setCountry = (e) => {
-        setSelectedCountry({code: _countries[e.target.value].isoCode, name: _countries[e.target.value].name})
+        setSelectedCountry({ code: _countries[e.target.value].isoCode, name: _countries[e.target.value].name })
     }
 
     const setCity = (e) => {
@@ -50,8 +65,46 @@ function ManageMissionModal({ showModal, type, close, mission }) {
         setRequirements(temp);
     }
 
+    const { _api } = AxiosService()
+    const [isLoading, setIsLoading] = useState(false)
+
+    const data = () => {
+        return {
+            'name': title,
+            'description': description,
+            'location': `${selectedCountry.name}, ${selectedCity}`,
+            'applicants': applicants,
+            'estTime': estTime,
+            'volunteeringHours': volunteeringHours,
+            'volunteeringLocation': volunteerLocation,
+            'deadline': deadline,
+            'requirements': requirements
+        }
+    }
+
+    const sendRequest = (url, request_type) => {
+        setIsLoading(true)
+        eval(request_type)(`${url}`, data())
+            .then(res => {
+                setIsLoading(false)
+                setMissions_([...res.data.org_missions])
+                setMissions(JSON.stringify(res.data.missions))
+            }).catch(err => {
+                setIsLoading(false)
+                console.log(err)
+            })
+    }
+
+    const updateMission = () => {
+        sendRequest(`/missions/${mission.id}/update`, '_api.patch')
+    }
+
+    const createMission = () => {
+        sendRequest(`/missions/create/org`, '_api.post')
+    }
+
     return (
-        <Modal showModal={showModal} close={close} buttonName={type === 'Edit' ? "Update Mission" : "Add Mission"} title={type === 'Edit' ? "Edit Mission" : "Add Mission"}>
+        <Modal isLoading={isLoading} onClick={type === 'Edit' ? updateMission : createMission} showModal={showModal} close={close} buttonName={type === 'Edit' ? "Update Mission" : "Add Mission"} title={type === 'Edit' ? "Edit Mission" : "Add Mission"}>
             {/* Form */}
             <form onSubmit={handleSubmit}>
                 <div>
@@ -72,7 +125,7 @@ function ManageMissionModal({ showModal, type, close, mission }) {
                 </div>
                 <div>
                     <label className="font-semibold pl-2">Volunteering Hours (hrs/day)</label>
-                    <Input onChange={(e) => setVolunteeringHours(e.target.value)} value={volunteeringHours} className={'border border-gray-200'} placeholder={'5'} type="number" />
+                    <Input max={24} onChange={(e) => setVolunteeringHours(e.target.value)} value={volunteeringHours} className={'border border-gray-200'} placeholder={'5'} type="number" />
                 </div>
                 <div>
                     <label className="font-semibold pl-2">Mission Description</label>
