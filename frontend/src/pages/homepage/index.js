@@ -3,139 +3,21 @@ import MissionHomeCard from "../../components/cards/mission_home";
 import Search from "../../components/form/search";
 import Filter from "../../components/form/filter";
 import MissionSideBar from "../../components/mission_sidebar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { disableBodyScroll, enableBodyScroll } from 'body-scroll-lock';
+import useSearch from "../../hooks/useSearch";
+import useFilter from "../../hooks/useFilter";
+import useMission from "../../hooks/useMission";
+import AxiosService from "../../services/axios.services";
+import { City, Country } from "country-state-city";
 
 function Home() {
-    // missions static
-    const missions = [
-        {
-            id: 1,
-            image: 'https://www.logo.wine/a/logo/Plaid_(company)/Plaid_(company)-Logo.wine.svg',
-            title: 'Mission Title 1',
-            post_human_date: '2 Hours Ago',
-            volunteering_hours: '5hrs/day',
-            est_time: '1 to 3 months',
-            deadline: 'Feb 02, 23',
-            volunteer_amount: 5,
-            description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-            location: 'Ethiopia, Addis Ababa',
-            job_location: 'On Site',
-            requirements: [
-                {id: 1, name: 'requirement1'},
-                {id: 2, name: 'requirement2'},
-                {id: 3, name: 'requirement3'},
-                {id: 4, name: 'requirement4'},
-                {id: 5, name: 'requirement5'},
-            ]
-        },
-        {
-            id: 2,
-            image: 'https://seeklogo.com/images/H/hewlett-packard-company-logo-F5676A4E16-seeklogo.com.png',
-            title: 'Mission Title 2',
-            post_human_date: '2 Hours Ago',
-            volunteering_hours: '5hrs/day',
-            est_time: '1 to 3 months',
-            deadline: 'Feb 02, 23',
-            volunteer_amount: 5,
-            description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-            location: 'Ethiopia, Addis Ababa',
-            job_location: 'On Site',
-            requirements: [
-                {id: 1, name: 'Requirement 1'},
-                {id: 2, name: 'Requirement 2'},
-                {id: 3, name: 'Requirement 3'},
-                {id: 4, name: 'Requirement 4'},
-                {id: 5, name: 'Requirement 5'},
-            ]
-        },
-        {
-            id: 3,
-            image: 'https://download.logo.wine/logo/The_Boring_Company/The_Boring_Company-Logo.wine.png',
-            title: 'Mission Title 3',
-            post_human_date: '2 Hours Ago',
-            volunteering_hours: '5hrs/day',
-            est_time: '1 to 3 months',
-            deadline: 'Feb 02, 23',
-            volunteer_amount: 5,
-            description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-            location: 'Ethiopia, Addis Ababa',
-            job_location: 'On Site',
-            requirements: [
-                {id: 1, name: 'Requirement 1'},
-                {id: 2, name: 'Requirement 2'},
-                {id: 3, name: 'Requirement 3'},
-                {id: 4, name: 'Requirement 4'},
-                {id: 5, name: 'Requirement 5'},
-            ]
-        },
-        {
-            id: 4,
-            image: 'https://upload.wikimedia.org/wikipedia/commons/5/54/Computools_company_logo.png',
-            title: 'Mission Title 4',
-            post_human_date: '2 Hours Ago',
-            volunteering_hours: '5hrs/day',
-            est_time: '1 to 3 months',
-            deadline: 'Feb 02, 23',
-            volunteer_amount: 5,
-            description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-            location: 'Ethiopia, Addis Ababa',
-            job_location: 'Remote',
-            requirements: [
-                {id: 1, name: 'Requirement 1'},
-                {id: 2, name: 'Requirement 2'},
-                {id: 3, name: 'Requirement 3'},
-                {id: 4, name: 'Requirement 4'},
-                {id: 5, name: 'Requirement 5'},
-            ]
-        },
-        {
-            id: 5,
-            image: 'https://www.logo.wine/a/logo/Plaid_(company)/Plaid_(company)-Logo.wine.svg',
-            title: 'Mission Title 5',
-            post_human_date: '2 Hours Ago',
-            volunteering_hours: '5hrs/day',
-            est_time: '1 to 3 months',
-            deadline: 'Feb 02, 23',
-            volunteer_amount: 5,
-            description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-            location: 'Ethiopia, Addis Ababa',
-            job_location: 'Remote',
-            requirements: [
-                {id: 1, name: 'Requirement 1'},
-                {id: 2, name: 'Requirement 2'},
-                {id: 3, name: 'Requirement 3'},
-                {id: 4, name: 'Requirement 4'},
-                {id: 5, name: 'Requirement 5'},
-            ]
-        },
-        {
-            id: 6,
-            image: 'https://www.logo.wine/a/logo/Plaid_(company)/Plaid_(company)-Logo.wine.svg',
-            title: 'Mission Title 6',
-            post_human_date: '2 Hours Ago',
-            volunteering_hours: '5hrs/day',
-            est_time: '1 to 3 months',
-            deadline: 'Feb 02, 23',
-            volunteer_amount: 5,
-            description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-            location: 'Ethiopia, Addis Ababa',
-            job_location: 'Remote',
-            requirements: [
-                {id: 1, name: 'Requirement 1'},
-                {id: 2, name: 'Requirement 2'},
-                {id: 3, name: 'Requirement 3'},
-                {id: 4, name: 'Requirement 4'},
-                {id: 5, name: 'Requirement 5'},
-            ]
-        }
-    ]
     const [showSidebar, setShowSidebar] = useState(false);
     const [selectedMission, setSelectedMission] = useState(0);
-    const openCard = (mission_id) => {
+    const openCard = (index) => {
         const targetElement = document.querySelector('#m_sidebar');
         setShowSidebar(true)
-        setSelectedMission(mission_id)
+        setSelectedMission(index)
         disableBodyScroll(targetElement)
     }
     const hideSidebar = () => {
@@ -143,39 +25,117 @@ function Home() {
         setShowSidebar(false)
         enableBodyScroll(targetElement)
     }
+    const { query, setQuery } = useSearch();
+    const { filter, setFilter } = useFilter();
+    const { missions, setMissions } = useMission();
+    const { _api } = AxiosService()
+    const [enableLocation, setEnableLocation] = useState(false)
+
+    const _countries = Country.getAllCountries()
+    const [selectedCountry, setSelectedCountry] = useState({ code: _countries[0].isoCode, name: _countries[0].name, value: 0 })
+    var _cities = City.getCitiesOfCountry(selectedCountry.code)
+    const [selectedCity, setSelectedCity] = useState(_cities[0]?.name)
+
+    const locations = [
+        { name: 'On Site', id: 'On Site' },
+        { name: 'Remote', id: 'Remote' },
+    ]
+
+    const [checkedOrg, setCheckedOrg] = useState([]);
+    const [checkedLoc, setCheckedLoc] = useState(new Array(locations.length).fill(false));
+    const [organizations, setOrganizations] = useState([]);
+    const [applicant, setApplicant] = useState("0")
+
+    useEffect(() => {
+        const data = {
+            'location': enableLocation ? `${selectedCountry.name}, ${selectedCity}` : '',
+            'organizations': checkedOrg.map((org, i) => org && organizations[i]?.id).filter(org => org),
+            'volunteerLocation': checkedLoc.map((loc, i) => loc && locations[i]?.id).filter(loc => loc),
+            'applicants': applicant,
+            'query': query
+        }
+        setFilter(JSON.stringify(data))
+        if (query.length === 0 && data['location'] === '' && data['organizations'].length === 0 && data['volunteerLocation'] === 0 && data['applicants'] === "0")
+            _api.get(`/missions`)
+                .then((res) => {
+                    setMissions(JSON.stringify(res.data))
+                    console.log(missions)
+                }).catch(err => console.log(err.data))
+    }, [_api, applicant, checkedLoc, checkedOrg, enableLocation, organizations, query, selectedCity, selectedCountry, setFilter, setMissions])
     return (
         <>
-            <MissionSideBar showSidebar={showSidebar} onClick={hideSidebar} mission={missions[selectedMission]} />
+            {missions && JSON.parse(missions)?.length > 0 && <MissionSideBar showSidebar={showSidebar} onClick={hideSidebar} mission={JSON.parse(missions)?.length > 0 && JSON.parse(missions)[selectedMission]} />}
             <AuthLayout>
                 <main className="container mx-auto px-5 lg:px-10 xl:px-0 flex py-14 space-x-0 sm:space-x-5 lg:space-x-10 scrollbar-hide">
                     {/* Filter Component */}
                     <div className="hidden sm:block w-1/3">
-                        <Filter />
+                        <Filter
+                            filter={filter}
+                            setMissions={setMissions}
+                            enableLocation={enableLocation}
+                            setEnableLocation={setEnableLocation}
+                            setSelectedCountry={setSelectedCountry}
+                            setSelectedCity={setSelectedCity}
+                            selectedCountry={selectedCountry}
+                            selectedCity={selectedCity}
+                            checkedLoc={checkedLoc}
+                            setCheckedLoc={setCheckedLoc}
+                            checkedOrg={checkedOrg}
+                            setCheckedOrg={setCheckedOrg}
+                            locations={locations}
+                            organizations={organizations}
+                            setOrganizations={setOrganizations}
+                            applicant={applicant}
+                            setApplicant={setApplicant}
+                            _countries={_countries}
+                            _cities={_cities}
+                        />
                     </div>
                     <div className="w-full sm:w-2/3 space-y-7">
                         {/* Search Component */}
-                        <Search />
+                        <Search filter={filter} query={query} setMissions={setMissions} setQuery={setQuery} />
                         {/* Filter Component Mobile */}
                         <div className="sm:hidden block">
-                            <Filter />
+                            <Filter
+                                filter={filter}
+                                setMissions={setMissions}
+                                enableLocation={enableLocation}
+                                setEnableLocation={setEnableLocation}
+                                setSelectedCountry={setSelectedCountry}
+                                setSelectedCity={setSelectedCity}
+                                selectedCountry={selectedCountry}
+                                selectedCity={selectedCity}
+                                checkedLoc={checkedLoc}
+                                setCheckedLoc={setCheckedLoc}
+                                checkedOrg={checkedOrg}
+                                setCheckedOrg={setCheckedOrg}
+                                locations={locations}
+                                organizations={organizations}
+                                setOrganizations={setOrganizations}
+                                applicant={applicant}
+                                setApplicant={setApplicant}
+                                _countries={_countries}
+                                _cities={_cities}
+                            />
                         </div>
                         {/* Missions */}
                         <div className="shadow shadow-slate-50 p-5 border border-gray-200 space-y-5 bg-white rounded-2xl">
-                            {missions.map((mission) => (
+                            {missions && JSON.parse(missions)?.map((mission, i) => (
                                 <MissionHomeCard
-                                    key={mission.id}
-                                    action={() => openCard(mission.id-1)}
-                                    image={mission.image}
+                                    key={i}
+                                    action={() => openCard(i)}
+                                    image={mission.organization.image}
                                     description={mission.description}
                                     deadline={mission.deadline}
-                                    est_time={mission.est_time}
+                                    est_time={mission.estTime}
                                     location={mission.location}
-                                    post_human_date={mission.post_human_date}
-                                    title={mission.title}
-                                    volunteer_amount={mission.volunteer_amount}
-                                    volunteering_hours={mission.volunteering_hours} />
+                                    post_human_date={mission.created_at}
+                                    title={mission.name}
+                                    volunteer_amount={mission.max_people}
+                                    volunteering_hours={mission.volunteeringHours} />
                             ))}
-                            <div className="cursor-pointer lg:text-lg text-base text-center">Load More</div>
+                            {/* I'm not going to do pagination because i don't have time. */}
+                            {/* <div className="cursor-pointer lg:text-lg text-base text-center">Load More</div> */}
                         </div>
                     </div>
                 </main>
