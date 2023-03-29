@@ -1,7 +1,7 @@
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import Button from "../form/button";
 
-function Modal({ showModal, title, children, buttonName, close }) {
+function Modal({ showModal, title, children, buttonName, close, onClick, isLoading }) {
 
     return (
         <>
@@ -23,7 +23,7 @@ function Modal({ showModal, title, children, buttonName, close }) {
                     {/* Modal Footer */}
                     <hr className="h-px bg-gray-100 border-0 w-full" />
                     <div className="p-5">
-                        <Button className="w-full rounded-3xl" text={buttonName} />
+                        <Button isLoading={isLoading} action={onClick} className="w-full rounded-3xl" text={buttonName} />
                     </div>
                 </div>
             </div>
