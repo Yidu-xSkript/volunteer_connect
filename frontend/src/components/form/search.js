@@ -5,12 +5,11 @@ import API from "../../utils/API";
 
 function Search({ query, setQuery, filter, setIsLoading, setMissions }) {
     const { _api } = AxiosService()
-    const { base_api_url } = API()
 
     const applySearch = async () => {
         const data = JSON.parse(filter)
         // Use Redux to store data. but for now let's just use localstorage.
-        await _api.get(`${base_api_url}/missions?query=${data['query']}&applicants=${data['applicants']}&location=${data['location']}&volunteerLocation=${JSON.stringify(data['volunteerLocation'])}&organizations=[${data['organizations']}]`)
+        await _api.get(`/missions?query=${data['query']}&applicants=${data['applicants']}&location=${data['location']}&volunteerLocation=${JSON.stringify(data['volunteerLocation'])}&organizations=[${data['organizations']}]`)
             .then((res) => {
                 setMissions(JSON.stringify(res.data))
             })
