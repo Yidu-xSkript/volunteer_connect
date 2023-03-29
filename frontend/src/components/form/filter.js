@@ -2,16 +2,26 @@ import { XCircleIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import Dropdown from "./dropdown";
 import CheckBox from "./checkbox";
 import Button from "./button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useWindowDimensions from "../../hooks/dimension";
 import LocationDropdown from "../location";
-import { City, Country } from "country-state-city";
-import useFilter from "../../hooks/useFilter";
+import AxiosService from "../../services/axios.services"
+import axios from "axios";
+import API from "../../utils/API";
 
-function Filter() {
-    const { filter, removeFilter, setFilter } = useFilter();
+function Filter({ filter,
+    setMissions,
+    enableLocation, setEnableLocation,
+    _countries, _cities,
+    setSelectedCountry, setSelectedCity,
+    selectedCountry, selectedCity,
+    checkedOrg, setCheckedOrg, checkedLoc, setCheckedLoc, locations, organizations, setOrganizations, applicant, setApplicant }) {
+
+    const { _api } = AxiosService();
+    const { base_api_url } = API();
 
     const applicants = [
+        { id: 0, name: 'Any' },
         { id: 1, name: 'Less than 5' },
         { id: 2, name: '5 - 20' },
         { id: 3, name: '21 - 50' },
@@ -19,38 +29,23 @@ function Filter() {
         { id: 5, name: 'More than 100' },
     ]
 
-    const organizations = [
-        { name: 'Org1', id: 1 },
-        { name: 'Org2', id: 2 },
-        { name: 'Org3', id: 3 },
-        { name: 'Org4', id: 4 },
-        { name: 'Org5', id: 5 }
-    ]
-
-    const locations = [
-        { name: 'On Site', id: 'On Site' },
-        { name: 'Remote', id: 'Remote' },
-    ]
-
     const [showFilter, setShowFilter] = useState(false)
     const { width } = useWindowDimensions();
 
-    const [checkedOrg, setCheckedOrg] = useState(new Array(organizations.length).fill(false));
-    const [checkedLoc, setCheckedLoc] = useState(new Array(locations.length).fill(false));
+    const getAllOrganizations = async () => {
+        await axios.get(`${base_api_url}/organizations`)
+            .then(res => {
+                setOrganizations([...res.data])
+                setCheckedOrg(new Array(res.data?.length).fill(false))
+            })
+            .catch(err => console.log(err))
+    }
 
     const handleCheckChange = (index, updatable, updatableValue = []) => {
-        const updatedCheckedState = updatableValue.map((item, i) =>
-            i === index ? !item : item
-        );
+        const updatedCheckedState = updatableValue.map((item, i) => i === index ? !item : item)
         updatable(updatedCheckedState);
     };
 
-    const [applicant, setApplicant] = useState("1")
-
-    const _countries = Country.getAllCountries()
-    const [selectedCountry, setSelectedCountry] = useState({ code: _countries[0].isoCode, name: _countries[0].name, value: 0 })
-    var _cities = City.getCitiesOfCountry(selectedCountry.code)
-    const [selectedCity, setSelectedCity] = useState(_cities[0]?.name)
     const [isLoading, setIsLoading] = useState(false)
 
     const clearAll = () => {
@@ -60,14 +55,29 @@ function Filter() {
         const locState = checkedLoc.map(() => (false))
         setCheckedLoc(locState)
 
-        setSelectedCountry({ code: _countries[0].isoCode, name: _countries[0].name, value: 0 })
+        setSelectedCountry({ code: _countries[0]?.isoCode, name: _countries[0]?.name, value: 0 })
         setSelectedCity(_cities[0]?.name)
-        setApplicant("1")
+        setApplicant("0")
+        // setEnableLocation(!enableLocation)
     }
 
     const applyFilter = () => {
-        // setIsLoading(!isLoading)
+        const data = JSON.parse(filter)
+        setIsLoading(true)
+        // Use Redux to store data. but for now let's just use localstorage.
+        _api.get(`${base_api_url}/missions?query=${data['query']}&applicants=${data['applicants']}&location=${data['location']}&volunteerLocation=${JSON.stringify(data['volunteerLocation'])}&organizations=[${data['organizations']}]`)
+            .then((res) => {
+                setIsLoading(false)
+                console.log(res)
+                setMissions(JSON.stringify(res.data))
+            })
+            .catch(err => console.log(err.data))
     }
+
+    useEffect(() => {
+        if (organizations.length === 0) getAllOrganizations()
+    }, [organizations])
+
 
     return (
         <div className="shadow shadow-slate-50 rounded-2xl p-5 border border-gray-200 space-y-5">
@@ -83,21 +93,28 @@ function Filter() {
             <div className={`space-y-5 ${showFilter || width > 640 ? 'block' : 'hidden'}`}>
                 {/* Location Filter -- populate data from an API */}
                 <div className="">
-                    <label className="font-semibold lg:text-base text-sm">Location</label>
+                    <div className="flex space-x-4">
+                        <label className="font-semibold lg:text-base text-sm">Location</label>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                            <input onChange={() => setEnableLocation(!enableLocation)} value={enableLocation} type="checkbox" className="peer sr-only" />
+                            <div className="w-10 h-4 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-gray-300 peer-checked:after:shadow after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                        </label>
+                    </div>
                     <LocationDropdown
                         countryValue={selectedCountry.value}
                         cityValue={selectedCity}
                         _countries={_countries}
                         _cities={_cities}
+                        disabled={!enableLocation}
                         setCity={(e) => setSelectedCity(e.target.value)}
-                        setCountry={(e) => setSelectedCountry({ code: _countries[e.target.value].isoCode, name: _countries[e.target.value].name, value:e.target.value })} />
+                        setCountry={(e) => setSelectedCountry({ code: _countries[e.target.value]?.isoCode, name: _countries[e.target.value]?.name, value: e.target.value })} />
                 </div>
                 <hr className="h-px bg-gray-100 border-0 w-full" />
                 {/* Organization Filter */}
                 <div className="space-y-2">
                     <label className="font-semibold lg:text-base text-sm">Organizations</label>
                     <div className="space-y-1">
-                        {organizations.map((org, i) => (
+                        {organizations?.map((org, i) => (
                             <CheckBox key={i} name={org.name} value={org.id} onChange={() => handleCheckChange(i, setCheckedOrg, checkedOrg)} checked={checkedOrg[i]} />
                         ))}
                     </div>
