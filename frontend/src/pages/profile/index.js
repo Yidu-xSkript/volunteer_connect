@@ -16,7 +16,7 @@ function Profile() {
     const [isLoading, setIsLoading] = useState(false)
 
     const [name, setName] = useState(_user.name)
-    const [bio, setBio] = useState(_user.bio)
+    const [bio, setBio] = useState(_user.biography)
     const [phone_number, setPhoneNumber] = useState(_user.phone_no)
     const [location, setLocation] = useState(_user?.location)
     const [error, setError] = useState('')
@@ -65,7 +65,7 @@ function Profile() {
                                 <LockOpenIcon className="w-10 p-2 overflow-visible rounded-full shadow border border-gray-300 cursor-pointer" title="Change Password" />
                             </div>
                         </div>
-                        {!editMode && <p className="text-gray-600 xl:text-base sm:text-sm text-xs select-none">{_user.bio}</p>}
+                        {!editMode && <p className="text-gray-600 xl:text-base sm:text-sm text-xs select-none">{_user.biography}</p>}
                         {editMode && <textarea onChange={(e) => setBio(e.target.value)} value={bio} className={`w-full text-gray-900 xl:text-base sm:text-sm text-xs h-32 border-b border-gray-300 focus:outline-none`} placeholder={'Tell us about yourself'}></textarea>}
                         <p className="text-gray-600 select-none"><span className="font-semibold text-black">Phone Number</span>: {!editMode ? _user.phone_no : <input value={phone_number} onChange={(e) => setPhoneNumber(e.target.value)} className={`duration-150 focus:bg-white border-b border-gray-300 focus:outline-none`} type="text" placeholder={'Phone Number'} required />}</p>
                         {_user.role === 'organization' && <p className="text-gray-600 select-none"><span className="font-semibold text-black">Location</span>: {!editMode ? _user.location : <input value={location} onChange={(e) => setLocation(e.target.value)} className={`duration-150 focus:bg-white border-b border-gray-300 focus:outline-none`} type="text" placeholder={'HQ Location'} required />}</p>}
