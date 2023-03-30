@@ -14,7 +14,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 
-app.config["JWT_SECRET_KEY"] = environ.get('JWT_SECRET_KEY')
+app.config["JWT_SECRET_KEY"] = "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IlZvbHVudGVlckNvbm5lY3QiLCJleHAiOjE2NzkzMTExNzgsImlhdCI6MTY3OTMxMTE3OH0.bj5LJGeR2mT3vs3iIGkW7BnnxEyF9s5tp_5SaUKf4mQ"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 
 jwt = JWTManager(app)
