@@ -1,9 +1,9 @@
 from flask import Flask
-from models.volcon_db import db, User, TokenBlocklist
-from volcon.auth.Controller import AuthController
-from volcon.missions.Controller import MissionController
-from volcon.applications.Controller import AppController
-from volcon.org.org_routes import org_bp
+from backend.models.volcon_db import db, User, TokenBlocklist
+from backend.volcon.auth.Controller import AuthController
+from backend.volcon.missions.Controller import MissionController
+from backend.volcon.applications.Controller import AppController
+from backend.volcon.org.org_routes import org_bp
 from datetime import timedelta, datetime, timezone
 from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity, \
     JWTManager
