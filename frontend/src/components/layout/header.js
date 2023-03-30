@@ -5,6 +5,7 @@ import useToken from "../../hooks/useToken";
 import API from "../../utils/API";
 import useUser from "../../hooks/useUser";
 import AxiosService from "../../services/axios.services";
+import logo from '../../assets/logo.svg'
 
 function Header() {
     const [showDropdown, setShowDropdown] = useState(false)
@@ -31,9 +32,9 @@ function Header() {
     }
 
     return (
-        <header className="px-10 py-4 shadow-xl shadow-slate-50 border-b border-gray-200 flex items-center justify-between">
-            <h1 className="text-4xl font-bold z-10 relative">Logo</h1>
-            {/* <img src={logo} className="w-40 relative z-10" alt="logo" /> */}
+        <header className="px-10 shadow-xl shadow-slate-50 border-b border-gray-200 flex items-center justify-between">
+            {/* <h1 className="text-4xl font-bold z-10 relative">Logo</h1> */}
+            <img src={logo} className="w-16 relative z-10" alt="logo" />
 
             <div className="space-x-5 lg:block hidden">
                 <NavLink className={({ isActive }) => isActive ? "text-black" : "text-gray-400 hover:text-black"} to="/">Find Missions</NavLink>
