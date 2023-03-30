@@ -21,7 +21,7 @@ jwt = JWTManager(app)
 
 # Connecting to xampp mysql engine using database URI
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:''@localhost/volcon_db_test'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:ocRnOeq9tX9NX6dFB4zl@containers-us-west-78.railway.app:6177/railway'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:ocRnOeq9tX9NX6dFB4zl@containers-us-west-78.railway.app:6177/railway?charset=utf8mb4'
 # We're not using flask_sqlalchemy event system -
 # we can remove the warning using the statement below
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
