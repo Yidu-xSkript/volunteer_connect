@@ -55,7 +55,7 @@ function Home() {
             'query': query
         }
         setFilter(JSON.stringify(data))
-        if (query.length === 0 && data['location'] === '' && data['organizations'].length === 0 && data['volunteerLocation'] === 0 && data['applicants'] === "0")
+        if (query.length === 0 && !enableLocation && data['organizations'].length === 0 && data['volunteerLocation'] === 0 && data['applicants'] === "0")
             _api.get(`/missions`)
                 .then((res) => {
                     setMissions(JSON.stringify(res.data))
@@ -134,6 +134,7 @@ function Home() {
                                     volunteer_amount={mission.max_people}
                                     volunteering_hours={mission.volunteeringHours} />
                             ))}
+                            {missions && JSON.parse(missions)?.length === 0 && <h4 className="text-center uppercase tracking-[0.3rem] font-semibold">Nothing Here!</h4>}
                             {/* I'm not going to do pagination because i don't have time. */}
                             {/* <div className="cursor-pointer lg:text-lg text-base text-center">Load More</div> */}
                         </div>
