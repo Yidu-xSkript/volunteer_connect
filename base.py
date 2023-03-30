@@ -69,3 +69,5 @@ def refresh_expiring_jwts(response):
     except (RuntimeError, KeyError):
         # Case where there is not a valid JWT. Just return the original respone
         return response
+
+db.create_all()
