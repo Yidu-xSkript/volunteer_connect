@@ -20,7 +20,8 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 jwt = JWTManager(app)
 
 # Connecting to xampp mysql engine using database URI
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:''@localhost/volcon_db_test'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:''@localhost/volcon_db_test'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:ocRnOeq9tX9NX6dFB4zl@containers-us-west-78.railway.app:6177/railway'
 # We're not using flask_sqlalchemy event system -
 # we can remove the warning using the statement below
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
