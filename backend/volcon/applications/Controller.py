@@ -14,7 +14,7 @@ def getApplications():
     """Gets All Application listings the volunteer applied to.
     """
     user = get_current_user()
-    return model.getAllForUser(user.id, user.role)
+    return model.getAllForUser(user.role)
 
 
 @AppController.route('/mission/<int:mission_id>/apply', methods=['post'], strict_slashes=False)

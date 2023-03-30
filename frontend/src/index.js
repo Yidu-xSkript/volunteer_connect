@@ -16,6 +16,10 @@ import Mission from './pages/missions';
 import Applications from './pages/applications';
 import Applicants from './pages/applicants';
 import Profile from './pages/profile';
+import TimeAgo from 'javascript-time-ago'
+
+import en from 'javascript-time-ago/locale/en.json'
+TimeAgo.addDefaultLocale(en)
 
 const router = createBrowserRouter([
   {

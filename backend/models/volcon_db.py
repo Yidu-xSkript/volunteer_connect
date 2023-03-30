@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash
 from flask_jwt_extended import get_current_user
 from mixin.serializer import SerializerMixin
+from ast import literal_eval
 
 db = SQLAlchemy()
 
@@ -56,6 +57,20 @@ class Volunteer(User):
     def verify_password(self, pwd):
         return check_password_hash(self.password, pwd)
 
+    def destroyResume(self, id):
+        vol = self.query.get(id)
+        if vol:
+            vol.resume = None
+            db.session.commit()
+        return vol
+
+    def updateResume(self, id, resume):
+        vol = self.query.get(id)
+        if vol:
+            vol.resume = resume
+            db.session.commit()
+        return vol
+
 
 class Organization(User):
     """Defines the Organization Table; which is a Child Table of the User Table"""
@@ -66,7 +81,7 @@ class Organization(User):
 
     id = db.Column(db.Integer, db.ForeignKey(User.id), primary_key=True)
     location = db.Column(db.String(255), nullable=True)
-    missions = db.relationship('Mission')
+    missions = db.relationship('Mission', backref='organization')
 
     __mapper_args__ = {
         'polymorphic_identity': 'organization'
@@ -112,18 +127,38 @@ class Mission(db.Model, SerializerMixin):
                            onupdate=datetime.utcnow, nullable=False)
     requirements = db.relationship('Requirement', backref='mission')
 
-    def filter(self, query, orgs:list, applicants, location, volunteerLocation):
+    def getMyMissions(self):
+        user: User = get_current_user()
+        missions: list[self] = self.query.filter_by(org_id=user.id).all()
+        return missions
+
+    def filter(self, query, orgs, applicants, location, volunteerLocation):
         missions: list[self] = self.query.order_by('updated_at')
+        _orgs = literal_eval(orgs) if orgs else []
+        _volLoc = literal_eval(volunteerLocation) if volunteerLocation else []
         if query:
             missions = missions.filter(Mission.name.like('%'+query+'%'))
-        if applicants > 0:
-            missions = missions.filter_by(max_people = applicants)
-        if len(orgs) > 0:
-            missions = missions.filter(self.org_id.in_(orgs))
-        if location:
-            missions = missions.filter_by(location = location)
-        if volunteerLocation:
-            missions = missions.filter_by(volunteeringLocation = volunteerLocation)
+        if applicants and int(applicants) > 0:
+            if int(applicants) == 1:
+                missions = missions.filter(Mission.max_people <= 5)
+            if int(applicants) == 2:
+                missions = missions.filter(
+                    Mission.max_people > 5, Mission.max_people < 20)
+            if int(applicants) == 3:
+                missions = missions.filter(
+                    Mission.max_people >= 20, Mission.max_people < 50)
+            if int(applicants) == 4:
+                missions = missions.filter(
+                    Mission.max_people >= 50, Mission.max_people < 100)
+            if int(applicants) == 5:
+                missions = missions.filter(Mission.max_people >= 100)
+        if _orgs and len(_orgs) > 0:
+            missions = missions.filter(Mission.org_id.in_(tuple(orgs)))
+        if location and len(location) > 0:
+            missions = missions.filter_by(location=location)
+        if _volLoc and len(_volLoc) > 0:
+            missions = missions.filter(
+                Mission.volunteeringLocation.in_(tuple(volunteerLocation)))
         return missions.all()
 
 
@@ -135,19 +170,21 @@ class Application(db.Model, SerializerMixin):
     __tablename__ = 'applications'
 
     serialize_rules = ('-mission.requirements',
-                       '-mission.organization.missions',)
+                       '-mission.organization.missions',
+                       '-user.applications',)
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey(
         'volunteers.id'), nullable=False)
     mission_id = db.Column(db.Integer, db.ForeignKey(
-        'missions.id'), nullable=False)
+        'missions.id', ondelete='CASCADE'), nullable=False)
     created_at = db.Column(
         db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow,
                            onupdate=datetime.utcnow, nullable=False)
     status = db.Column(db.Boolean, nullable=True)
     mission = db.relationship('Mission')
+    user = db.relationship('Volunteer')
 
 
 # This could be expanded to fit the needs of the application. For example,

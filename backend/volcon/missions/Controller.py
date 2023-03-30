@@ -15,6 +15,13 @@ def get_missions():
     """
     return model.get_all_missions()
 
+@MissionController.route('/organization', methods=['GET'], strict_slashes=False)
+@check_access(['organization'])
+def get_org_missions():
+    """Gets All Missions by Default until Search
+    Filters are Applied
+    """
+    return model.getOrgMissions()
 
 @MissionController.route('/<string:mission_id>', methods=['GET'], strict_slashes=False)
 def get_mission(mission_id):

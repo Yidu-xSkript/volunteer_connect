@@ -1,14 +1,45 @@
 from flask import jsonify, request
 from sqlalchemy.exc import SQLAlchemyError
-from models.volcon_db import db, Mission
+from models.volcon_db import db, Mission, User
 from volcon.requirement.Model import RequirementModel
+from volcon.applications.Model import ApplicationModel
 
 requirementModel = RequirementModel()
 mission = Mission()
+applicationModel = ApplicationModel()
+
 
 class MissionModel:
+
+    # get missions with relationship
     @staticmethod
-    def Create(org_id):
+    def get_all_missions():
+        try:
+            # Implement Filter
+            organizations = request.args.get('organizations')
+            location = request.args.get('location')
+            volunteerLocation = request.args.get('volunteerLocation')
+            applicants = request.args.get('applicants')
+
+            query = request.args.get("query")
+            missions: list[Mission] = mission.filter(
+                query, organizations, applicants, location, volunteerLocation)
+
+            return [mission.to_dict() for mission in missions]
+        except SQLAlchemyError as e:
+            error = str(e.__dict__.get('orig', e))
+            return jsonify({'error': error}), 500
+
+    def getOrgMissions(self):
+        try:
+            # Implement Filter
+            missions: list[Mission] = mission.getMyMissions()
+            return [mission.to_dict() for mission in missions]
+        except SQLAlchemyError as e:
+            error = str(e.__dict__.get('orig', e))
+            return jsonify({'error': error}), 500
+
+    def Create(self, org_id):
         try:
             data = request.get_json()
             mission: Mission = Mission(
@@ -26,27 +57,8 @@ class MissionModel:
             db.session.commit()
             requirementModel.Create(
                 mission_id=mission.id, requirements=data['requirements'])
-            return mission.to_dict()
-        except SQLAlchemyError as e:
-            error = str(e.__dict__.get('orig', e))
-            return jsonify({'error': error}), 500
-
-    # get missions with relationship
-    @staticmethod
-    def get_all_missions():
-        try:
-            # Implement Filter
-            data = request.get_json()
-            organizations = data['organizations']
-            location = data['location']
-            volunteerLocation = data['volunteerLocation']
-            applicants = data['applicants']
-
-            query = request.args.get("query")
-            missions: list[Mission] = mission.filter(
-                    query, organizations, applicants, location, volunteerLocation)
-
-            return [mission.to_dict() for mission in missions]
+            missions: list[Mission] = Mission.query.all()
+            return jsonify({'org_missions': self.getOrgMissions(), 'missions': [mission.to_dict() for mission in missions]})
         except SQLAlchemyError as e:
             error = str(e.__dict__.get('orig', e))
             return jsonify({'error': error}), 500
@@ -64,8 +76,7 @@ class MissionModel:
             error = str(e.__dict__.get('orig', e))
             return jsonify({'error': error}), 500
 
-    @staticmethod
-    def Update(mission_id):
+    def Update(self, mission_id):
         try:
             data = request.get_json()
             mission: Mission = Mission.query.filter_by(id=mission_id).first()
@@ -84,22 +95,24 @@ class MissionModel:
                 db.session.commit()
                 requirementModel.Update(
                     mission_id=mission_id, requirements=data['requirements'])
-                return mission.to_dict()
+                missions: list[Mission] = Mission.query.all()
+                return jsonify({'org_missions': self.getOrgMissions(), 'missions': [mission.to_dict() for mission in missions]})
             else:
                 return jsonify({'message': 'Mission not found'})
         except SQLAlchemyError as e:
             error = str(e.__dict__.get('orig', e))
             return jsonify({'error': error}), 500
 
-    @staticmethod
-    def Destroy(mission_id):
+    def Destroy(self, mission_id):
         try:
             mission = Mission.query.filter_by(id=mission_id).one_or_none()
             if mission:
                 requirementModel.Destroy(mission_id=mission_id)
+                applicationModel.Destroy(mission_id=mission_id)
                 db.session.delete(mission)
                 db.session.commit()
-                return jsonify({'message': 'Mission deleted successfully'})
+                missions: list[Mission] = Mission.query.all()
+                return jsonify({'org_missions': self.getOrgMissions(), 'missions': [mission.to_dict() for mission in missions]})
             else:
                 return jsonify({'message': 'Mission not found'})
         except SQLAlchemyError as e:

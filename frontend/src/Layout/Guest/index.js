@@ -3,6 +3,7 @@ import authCircle from '../../assets/vc-auth-circle-1.svg'
 import authCircleWhite from '../../assets/auth-circle-white.svg'
 import { Link, useLocation } from "react-router-dom";
 import AuthMiddleware from '../../utils/AuthMiddleware';
+import logo from "../../assets/logo.svg"
 
 function GuestLayout({ children }) {
     const { isLoggedIn } = AuthMiddleware();
@@ -11,14 +12,14 @@ function GuestLayout({ children }) {
     return (
         <div className='flex z-0'>
             {!isLoggedIn && <div className='hidden lg:block bg-auth w-1/2 h-full absolute top-0 bottom-0 2xl:p-16 p-0'>
-                {/* <img src={logo} className="w-40 relative z-10" alt="logo" /> */}
                 <div className='md:p-10'>
                     <img src={authCircle} className="w-40 xl:w-56 2xl:w-64 z-0 absolute -top-20 -left-20 pointer-events-none select-none" alt="circle-bg" />
                     <img src={authCircle} className="w-[18rem] md:w-[15rem] xl:w-[22rem] 2xl:w-[26rem] z-0 absolute -top-36 right-0 pointer-events-none select-none" alt="circle-bg" />
                     <img src={authCircle} className="w-[20rem] md:w-[18rem] xl:w-[25rem] 2xl:w-[30rem] z-0 absolute bottom-0 -left-32 pointer-events-none select-none" alt="circle-bg" />
                     <img src={authCircleWhite} className="w-[22rem] md:w-[20rem] xl:w-[30rem] 2xl:w-[36rem] z-0 absolute bottom-0 -right-32 md:-right-10 pointer-events-none select-none" alt="circle-bg" />
-                    <h1 className="text-2xl xl:text-4xl font-bold z-10 relative">Logo</h1>
-                    <div className='mt-20'>
+                    <img src={logo} className="xl:w-28 w-16 relative z-10" alt="logo" />
+                    {/* <h1 className="text-2xl xl:text-4xl font-bold z-10 relative">Logo</h1> */}
+                    <div className='mt-5'>
                         <h1 className='text-primary font-heading text-5xl xl:text-6xl 2xl:text-[4.2rem] tracking-wide'>Welcome {location === '/login' ? 'back' : ''}</h1>
                         <h1 className='text-gray-800 font-heading text-5xl xl:text-6xl 2xl:text-[4.2rem] tracking-wide mt-5'>{location === '/signup' ? 'To Volunteer Connect' : 'We\'re excited you\'re here'}</h1>
                     </div>

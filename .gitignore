@@ -5,6 +5,7 @@ backend/__pycache__
 backend/models/__pycache__
 backend/mixin/__pycache__
 backend/mixin/serializer/__pycache__
+backend/mixin/serializer/lib/__pycache__
 backend/volcon/__pycache__
 backend/volcon/applications/__pycache__
 backend/volcon/auth/__pycache__
