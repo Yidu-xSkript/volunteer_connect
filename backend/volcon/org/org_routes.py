@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 # from flask_jwt_extended import jwt_required, get_current_user
 from sqlalchemy.orm.exc import NoResultFound
 # from models.volcon_db import Mission, Organization, Application, Volunteer
-from models.volcon_db import Organization
+from backend.models.volcon_db import Organization
 # from mission_cruds import mission_CRUDS
 
 org_bp = Blueprint('org_bp', __name__, url_prefix='/api/v1/organizations')

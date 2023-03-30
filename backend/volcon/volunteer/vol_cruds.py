@@ -1,6 +1,6 @@
 from flask import jsonify, request
 from sqlalchemy.exc import SQLAlchemyError
-from models.volcon_db import db, Volunteer
+from backend.models.volcon_db import db, Volunteer
 import uuid
 
 

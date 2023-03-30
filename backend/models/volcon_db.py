@@ -5,7 +5,7 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash
 from flask_jwt_extended import get_current_user
-from mixin.serializer import SerializerMixin
+from backend.mixin.serializer import SerializerMixin
 from ast import literal_eval
 
 db = SQLAlchemy()

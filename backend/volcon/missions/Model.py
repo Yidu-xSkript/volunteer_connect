@@ -1,8 +1,8 @@
 from flask import jsonify, request
 from sqlalchemy.exc import SQLAlchemyError
-from models.volcon_db import db, Mission, User
-from volcon.requirement.Model import RequirementModel
-from volcon.applications.Model import ApplicationModel
+from backend.models.volcon_db import db, Mission, User
+from backend.volcon.requirement.Model import RequirementModel
+from backend.volcon.applications.Model import ApplicationModel
 
 requirementModel = RequirementModel()
 mission = Mission()

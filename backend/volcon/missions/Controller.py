@@ -1,6 +1,6 @@
 from flask import Blueprint
-from volcon.missions.Model import MissionModel
-from mixin.authorization import check_access
+from backend.volcon.missions.Model import MissionModel
+from backend.mixin.authorization import check_access
 from flask_jwt_extended import get_current_user, jwt_required
 
 MissionController = Blueprint('MissionController', __name__, url_prefix='/api/v1/missions')

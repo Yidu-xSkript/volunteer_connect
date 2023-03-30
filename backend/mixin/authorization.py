@@ -3,7 +3,7 @@ from functools import wraps
 from flask_jwt_extended import get_current_user, verify_jwt_in_request
 from flask_jwt_extended.exceptions import NoAuthorizationError
 
-from models.volcon_db import User
+from backend.models.volcon_db import User
 
 # @check_access decorator function
 def check_access(roles = []):

@@ -1,11 +1,11 @@
 from flask import jsonify, request, Blueprint
 from flask_jwt_extended import create_access_token, jwt_required, get_current_user, get_jwt
-from models.volcon_db import db, Volunteer, Organization, User, TokenBlocklist
+from backend.models.volcon_db import db, Volunteer, Organization, User, TokenBlocklist
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import generate_password_hash
-from volcon.volunteer.vol_cruds import vol_CRUDS
-from volcon.org.org_cruds import org_CRUDS
-from mixin.authorization import check_access
+from backend.volcon.volunteer.vol_cruds import vol_CRUDS
+from backend.volcon.org.org_cruds import org_CRUDS
+from backend.mixin.authorization import check_access
 
 AuthController = Blueprint('auth', __name__, url_prefix='/api/v1/auth')
 
