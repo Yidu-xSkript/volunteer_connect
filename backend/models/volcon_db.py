@@ -154,6 +154,7 @@ class Mission(db.Model, SerializerMixin):
                 missions = missions.filter(Mission.max_people >= 100)
         if _orgs and len(_orgs) > 0:
             missions = missions.filter(Mission.org_id.in_(tuple(orgs)))
+            print(_orgs)
         if location and len(location) > 0:
             missions = missions.filter_by(location=location)
         if _volLoc and len(_volLoc) > 0:
