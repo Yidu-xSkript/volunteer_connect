@@ -77,7 +77,7 @@ function ManageMissionModal({ showModal, type, close, mission, setMissions, setM
             'estTime': estTime,
             'volunteeringHours': volunteeringHours,
             'volunteeringLocation': volunteerLocation,
-            'deadline': deadline,
+            'deadline': deadline.toISOString().slice(0, 19).replace('T', ' '),
             'requirements': requirements
         }
     }
