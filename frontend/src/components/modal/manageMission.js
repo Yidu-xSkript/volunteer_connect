@@ -29,7 +29,7 @@ function ManageMissionModal({ showModal, type, close, mission, setMissions, setM
             vlArr.push(volunteerLocationOption[i].id)
         return null
     })
-    const [volunteerLocation, setVolunteerLocation] = useState(mission !== undefined ? vlArr[0] : volunteerLocationOption[0])
+    const [volunteerLocation, setVolunteerLocation] = useState(mission !== undefined ? vlArr[0]?.id : volunteerLocationOption[0]?.id)
     const _countries = Country.getAllCountries()
     var countryArr = []
     _countries.forEach((country) => {
