@@ -60,6 +60,7 @@ class MissionModel:
             missions: list[Mission] = Mission.query.all()
             return jsonify({'org_missions': self.getOrgMissions(), 'missions': [mission.to_dict() for mission in missions]})
         except SQLAlchemyError as e:
+            db.session.rollback()
             error = str(e.__dict__.get('orig', e))
             return jsonify({'error': error}), 500
 
