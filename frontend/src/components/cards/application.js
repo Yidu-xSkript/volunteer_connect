@@ -16,9 +16,9 @@ function Application ({image, name, mission_title, total_applied, amount_of_volu
                         <small className="text-xs text-gray-400">Est. Time {est_time} hrs/day</small>
                     </div>
                 </div>
-                <div className={`space-x-2 flex items-center pl-1 lg:pr-2 pr-1 py-1 rounded-full border ${isNaN(approval_status) ? 'bg-yellow-50 border-yellow-600' : approval_status === 0 ? 'bg-red-50 border-red-600' : 'bg-green-50 border-green-600'}`}>
-                    {isNaN(approval_status) ? <div className="rounded-full p-3 bg-yellow-500" /> : approval_status === 1 ? <CheckIcon className={`w-6 p-1 bg-green-600 text-white rounded-full`} /> : <XMarkIcon className={`w-6 p-1 bg-red-600 text-white rounded-full`} /> }
-                    <h6 className="hidden lg:block capitalize">{isNaN(approval_status) ? '' : 'Application'} {isNaN(approval_status) ? 'In Review' : approval_status === 1 ? 'Approved' : 'Denied'}</h6>
+                <div className={`space-x-2 flex items-center pl-1 lg:pr-2 pr-1 py-1 rounded-full border ${approval_status === null ? 'bg-yellow-50 border-yellow-600' : approval_status === false ? 'bg-red-50 border-red-600' : 'bg-green-50 border-green-600'}`}>
+                    {approval_status === null ? <div className="rounded-full p-3 bg-yellow-500" /> : approval_status === true ? <CheckIcon className={`w-6 p-1 bg-green-600 text-white rounded-full`} /> : <XMarkIcon className={`w-6 p-1 bg-red-600 text-white rounded-full`} /> }
+                    <h6 className="hidden lg:block capitalize">{approval_status === null ? '' : 'Application'} {approval_status === null ? 'In Review' : approval_status === true ? 'Approved' : 'Denied'}</h6>
                 </div>
             </div>
         </div>
