@@ -49,9 +49,7 @@ class vol_CRUDS:
         """Updating Details of an Existing Volunteer"""
         try:
             data = request.get_json()
-            vol: Volunteer = Volunteer.query.filter_by(id=vol_id).first()
-            if not vol:
-                return jsonify({'error': f'Volunteer with ID {vol_id} not found.'}), 404
+            vol: Volunteer = Volunteer.query.get(vol_id)
             vol.name = data.get('name', vol.name)
             vol.phone_no = data.get('phone_no', vol.phone_no)
             vol.image = data.get('image', vol.image)

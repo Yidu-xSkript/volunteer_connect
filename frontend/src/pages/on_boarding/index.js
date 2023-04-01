@@ -59,7 +59,7 @@ function OnBoarding() {
   const [isLoading, setIsLoading] = useState(false);
 
   const sendRequest = async (data) => {
-    await _api.patch(`${auth_api_url}/user/${_user?.id}/update`, data)
+    await _api.patch(`${auth_api_url}/user/update`, data)
       .then(res => {
         setUser(JSON.stringify(res.data))
         setIsLoading(false)

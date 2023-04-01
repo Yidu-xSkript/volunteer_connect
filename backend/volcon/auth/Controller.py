@@ -84,14 +84,14 @@ def user():
 # Both have bio - remove bio from organization table and add it to user table
 # Add resume to volunteer table.
 # We don't use session anymore since we're using tokens to track users.
-@AuthController.route('/user/<int:user_id>/update', methods=['PATCH'], strict_slashes=False)
+@AuthController.route('/user/update', methods=['PATCH'], strict_slashes=False)
 @jwt_required()
-def update_user(user_id):
+def update_user():
     current_user: User = get_current_user()
     if current_user.role == 'volunteer':
-        return vol_CRUDS().update_vol(user_id)
+        return vol_CRUDS().update_vol(current_user.id)
     elif current_user.role == 'organization':
-        return org_CRUDS().update_org(user_id)
+        return org_CRUDS().update_org(current_user.id)
 
 @AuthController.route('/user/<int:user_id>/image/update', methods=['PATCH'], strict_slashes=False)
 @jwt_required()
