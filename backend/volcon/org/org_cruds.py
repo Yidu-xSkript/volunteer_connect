@@ -28,21 +28,21 @@ class org_CRUDS:
         except SQLAlchemyError as e:
             return jsonify({'error': str(e)}), 500
 
-    def create_org(self):
-        """Creating a New Organization"""
-        try:
-            data = request.get_json()
-            org = Organization(org_name=data['org_name'],
-                               location=data['location'],
-                               biography=data.get('biography'),
-                               profile_logo=data.get('profile_logo'),
-                               org_id=str(uuid.uuid4()))
-            db.session.add(org)
-            db.session.commit()
-            return jsonify(org.to_dict()), 201
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            return jsonify({'error': str(e)}), 500
+    # def create_org(self):
+    #     """Creating a New Organization"""
+    #     try:
+    #         data = request.get_json()
+    #         org = Organization(org_name=data['org_name'],
+    #                            location=data['location'],
+    #                            biography=data.get('biography'),
+    #                            profile_logo=data.get('profile_logo'),
+    #                            org_id=str(uuid.uuid4()))
+    #         db.session.add(org)
+    #         db.session.commit()
+    #         return jsonify(org.to_dict()), 201
+    #     except SQLAlchemyError as e:
+    #         db.session.rollback()
+    #         return jsonify({'error': str(e)}), 500
 
     def update_org(self, user_id):
         """Updating Details of an Existing Organization"""
