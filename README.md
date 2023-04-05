@@ -2,7 +2,7 @@
 
 I developed Volunteer Connect with a partner for our Portfolio project at ALX. This master branch features what my partner and I deployed for presentation at ALX.
 
-![Logo](https://res.cloudinary.com/xplorestate/image/upload/v1680691588/logo_ynojhl.svg)
+![Logo](https://res.cloudinary.com/xplorestate/image/upload/v1680691745/logo_jcglnr.png)
 
 ## Description
 
