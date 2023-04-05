@@ -2,7 +2,7 @@
 
 I developed Volunteer Connect with a partner for our Portfolio project at ALX. This master branch features what my partner and I deployed for presentation at ALX.
 
-![Logo](https://res.cloudinary.com/xplorestate/image/upload/v1680685779/android-chrome-512x512_oktchs.png){ width="800" height="600" style="display: block; margin: 0 auto" }
+![Logo](https://res.cloudinary.com/xplorestate/image/upload/v1680691588/logo_ynojhl.svg)
 
 ## Description
 
@@ -12,11 +12,11 @@ Volunteer Connect is a very simple way to make a difference by connecting volunt
 
 For a more in-depth description of Volunteer Connect as well as an overview of its tech stack and development process, we have written a series of articles on Medium. You can read them at the links below:
 
-[How Volunteer-Connect Came To Be](https://medium.com/@thebenefactor37/how-volunteer-connect-came-to-be-ef819eb40750)
+- [How Volunteer-Connect Came To Be](https://medium.com/@thebenefactor37/how-volunteer-connect-came-to-be-ef819eb40750)
 
 ## Tech Stack
 
-![Tech Stack](https://res.cloudinary.com/xplorestate/image/upload/v1680691299/Server_side_Back-end_1_gauvwz.png){ width="800" height="600" style="display: block; margin: 0 auto" }
+![Tech Stack](https://res.cloudinary.com/xplorestate/image/upload/v1680691299/Server_side_Back-end_1_gauvwz.png)
 
 ## Front-end
 
