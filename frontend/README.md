@@ -1,6 +1,6 @@
-# Frontend for volunteer connect SPA
+# Frontend for volunteer connect
 
-**Libraries** In Use:
+**Dependencies** :
 
 - ReactJS
 - TailWind css

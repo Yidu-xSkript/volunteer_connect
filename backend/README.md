@@ -1,11 +1,16 @@
 # Backend for Volunteer Connect SPA
 
-**Technologies** Used:
+**Dependencies** :
 
 - Flask
 - Flask-SQLAlchemy
+- Flask-Cors
+- Flask-JWT-Extended
+- mysqlclient (Local)
+- PyMySQL (For Railway SQL extension - Production)
+- gunicorn
 
-## Steps to start flask app
+## Usage
 
 If you haven't created a virtual env yet. let's start with that
 
