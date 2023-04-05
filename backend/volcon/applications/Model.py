@@ -3,7 +3,7 @@
 
 from flask import jsonify, request
 from sqlalchemy.exc import SQLAlchemyError
-from models.volcon_db import db, Application, Volunteer, User
+from backend.models.volcon_db import db, Application, Volunteer, User
 from flask_jwt_extended import get_current_user
 
 class ApplicationModel:

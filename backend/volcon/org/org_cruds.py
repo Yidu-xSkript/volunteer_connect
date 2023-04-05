@@ -3,7 +3,7 @@
 
 from flask import jsonify, request
 from sqlalchemy.exc import SQLAlchemyError
-from models.volcon_db import db, Organization
+from backend.models.volcon_db import db, Organization
 
 class org_CRUDS:
     def __init__(self):
@@ -28,37 +28,34 @@ class org_CRUDS:
         except SQLAlchemyError as e:
             return jsonify({'error': str(e)}), 500
 
-    def create_org(self):
-        """Creating a New Organization"""
-        try:
-            data = request.get_json()
-            org = Organization(org_name=data['org_name'],
-                               location=data['location'],
-                               biography=data.get('biography'),
-                               profile_logo=data.get('profile_logo'),
-                               org_id=str(uuid.uuid4()))
-            db.session.add(org)
-            db.session.commit()
-            return jsonify(org.to_dict()), 201
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            return jsonify({'error': str(e)}), 500
+    # def create_org(self):
+    #     """Creating a New Organization"""
+    #     try:
+    #         data = request.get_json()
+    #         org = Organization(org_name=data['org_name'],
+    #                            location=data['location'],
+    #                            biography=data.get('biography'),
+    #                            profile_logo=data.get('profile_logo'),
+    #                            org_id=str(uuid.uuid4()))
+    #         db.session.add(org)
+    #         db.session.commit()
+    #         return jsonify(org.to_dict()), 201
+    #     except SQLAlchemyError as e:
+    #         db.session.rollback()
+    #         return jsonify({'error': str(e)}), 500
 
-    def update_org(self, org_id):
+    def update_org(self, user_id):
         """Updating Details of an Existing Organization"""
         try:
             data = request.get_json()
-            org: Organization = Organization.query.filter_by(id=org_id).first()
-            if org:
-                org.name = data.get('name', org.name)
-                org.location = data.get('location', org.location)
-                org.phone_no = data.get('phone_no', org.phone_no)
-                org.biography = data.get('bio', org.biography)
-                org.image = data.get('image', org.image)
-                db.session.commit()
-                return org.to_dict()
-            else:
-                return jsonify({'error': f'Organization with ID {org_id} not found.'}), 404
+            org: Organization = Organization.query.get(user_id)
+            org.name = data.get('name', org.name)
+            org.location = data.get('location', org.location)
+            org.phone_no = data.get('phone_no', org.phone_no)
+            org.biography = data.get('bio', org.biography)
+            org.image = data.get('image', org.image)
+            db.session.commit()
+            return org.to_dict()
         except SQLAlchemyError as e:
             db.session.rollback()
             return jsonify({'error': str(e)}), 500

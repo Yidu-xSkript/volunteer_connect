@@ -11,6 +11,7 @@ import API from "../../utils/API";
 import AxiosService from "../../services/axios.services";
 import AuthMiddleware from "../../utils/AuthMiddleware";
 import { useNavigate } from "react-router";
+import logo from "../../assets/logo.svg";
 
 function OnBoarding() {
   const { user, setUser } = useUser()
@@ -47,7 +48,7 @@ function OnBoarding() {
   const [uploadedImage, setUploadedImage] = useState();
   const [uploadedFile, setUploadedFile] = useState();
 
-  const [name, setName] = useState(_user.name)
+  const [name, setName] = useState(_user?.name)
   const [phoneNo, setPhoneNo] = useState()
   const [location, setLocation] = useState('')
   const [bio, setBio] = useState('')
@@ -58,7 +59,7 @@ function OnBoarding() {
   const [isLoading, setIsLoading] = useState(false);
 
   const sendRequest = async (data) => {
-    await _api.patch(`${auth_api_url}/user/${_user?.id}/update`, data)
+    await _api.patch(`${auth_api_url}/user/update`, data)
       .then(res => {
         setUser(JSON.stringify(res.data))
         setIsLoading(false)
@@ -108,8 +109,8 @@ function OnBoarding() {
         <img src={authCircle} className="lg:w-36 xl:w-40 2xl:w-64 z-0 absolute -top-20 -left-20 pointer-events-none select-none" alt="circle-bg" />
         <img src={authCircle} className="lg:w-40 xl:w-56 2xl:w-80 z-0 absolute -top-20 right-0 pointer-events-none select-none" alt="circle-bg" />
         <div className="xl:p-12 lg:p-5">
-          {/* <img src={logo} className="w-40 relative z-10" alt="logo" /> */}
-          <h1 className="text-5xl lg:text-3xl xl:text-4xl 2xl:text-5xl text-black font-bold z-10 relative mb-32">Logo</h1>
+          <img src={logo} className="w-28 lg:w-16 xl:w-24 2xl:w-32 relative z-10 mb-12" alt="logo" />
+          {/* <h1 className="text-5xl lg:text-3xl xl:text-4xl 2xl:text-5xl text-black font-bold z-10 relative mb-32">Logo</h1> */}
           {wizards.map((w, i) => (
             <div key={i} className="flex items-start space-x-4 my-2">
               <div className="flex flex-col items-center">

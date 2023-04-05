@@ -1,6 +1,7 @@
 .idea
 
-backend/env
+
+env
 backend/__pycache__
 backend/models/__pycache__
 backend/mixin/__pycache__

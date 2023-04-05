@@ -1,11 +1,11 @@
 from flask import jsonify, request, Blueprint
 from flask_jwt_extended import create_access_token, jwt_required, get_current_user, get_jwt
-from models.volcon_db import db, Volunteer, Organization, User, TokenBlocklist
+from backend.models.volcon_db import db, Volunteer, Organization, User, TokenBlocklist
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import generate_password_hash
-from volcon.volunteer.vol_cruds import vol_CRUDS
-from volcon.org.org_cruds import org_CRUDS
-from mixin.authorization import check_access
+from backend.volcon.volunteer.vol_cruds import vol_CRUDS
+from backend.volcon.org.org_cruds import org_CRUDS
+from backend.mixin.authorization import check_access
 
 AuthController = Blueprint('auth', __name__, url_prefix='/api/v1/auth')
 
@@ -84,14 +84,14 @@ def user():
 # Both have bio - remove bio from organization table and add it to user table
 # Add resume to volunteer table.
 # We don't use session anymore since we're using tokens to track users.
-@AuthController.route('/user/<int:user_id>/update', methods=['PATCH'], strict_slashes=False)
+@AuthController.route('/user/update', methods=['PATCH'], strict_slashes=False)
 @jwt_required()
-def update_user(user_id):
+def update_user():
     current_user: User = get_current_user()
     if current_user.role == 'volunteer':
-        return vol_CRUDS().update_vol(user_id)
+        return vol_CRUDS().update_vol(current_user.id)
     elif current_user.role == 'organization':
-        return org_CRUDS().update_org(user_id)
+        return org_CRUDS().update_org(current_user.id)
 
 @AuthController.route('/user/<int:user_id>/image/update', methods=['PATCH'], strict_slashes=False)
 @jwt_required()

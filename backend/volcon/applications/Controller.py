@@ -1,6 +1,6 @@
 from flask import Blueprint
-from volcon.applications.Model import ApplicationModel
-from mixin.authorization import check_access
+from backend.volcon.applications.Model import ApplicationModel
+from backend.mixin.authorization import check_access
 from flask_jwt_extended import get_current_user, jwt_required
 
 AppController = Blueprint('AppController', __name__,

@@ -33,7 +33,7 @@ function Profile() {
             'location': location
         }
 
-        _api.patch(`${auth_api_url}/user/${_user?.id}/update`, data)
+        _api.patch(`${auth_api_url}/user/update`, data)
             .then(res => {
                 setUser(JSON.stringify(res.data))
                 setIsLoading(false)
